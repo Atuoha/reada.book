@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349727032778",
+    "project_id": "reada-cb9c4",
+    "storage_bucket": "reada-cb9c4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349727032778:android:50de32623f0c45ad9bbb33",
+        "android_client_info": {
+          "package_name": "com.example.readers_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwxhJTpHg7ly3hq2XUuDrkV5i7U1da4Tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

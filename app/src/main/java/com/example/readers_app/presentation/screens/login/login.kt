@@ -1,0 +1,135 @@
+package com.example.readers_app.presentation.screens.login
+
+import android.app.Activity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.navigation.NavController
+import com.example.readers_app.R
+import com.example.readers_app.components.CustomBTN
+import com.example.readers_app.components.EmailInput
+import com.example.readers_app.components.PasswordInput
+import com.example.readers_app.components.RichTextNav
+import com.example.readers_app.components.TopText
+
+@Composable
+fun LoginScreen(navController: NavController) {
+    val context = LocalContext.current
+
+    val window = (context as Activity).window
+    SideEffect {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.statusBarColor = Color(0xFFFD9D48).toArgb()
+    }
+
+
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+    val passwordError = remember { mutableStateOf("") }
+    val emailError = remember { mutableStateOf("") }
+    val isObscured = remember { mutableStateOf(true) }
+
+    fun login() {
+        if (password.value.isNotEmpty() && email.value.isNotEmpty()) {
+            // Handle login
+        } else {
+            if (email.value.isEmpty()) {
+                emailError.value = "Email can not be empty"
+            }
+
+            if (password.value.isEmpty()) {
+                passwordError.value = "Password can not be empty"
+            }
+
+        }
+    }
+
+    return Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.primary)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ico), contentDescription = "Icon",
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(alignment = Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp)
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        horizontal = 25.dp,
+                        vertical = 28.dp
+                    )
+                    .verticalScroll(rememberScrollState())
+            ) {
+                TopText("Login", "Please fill in the details to login")
+                Spacer(modifier = Modifier.height(40.dp))
+                EmailInput(email, emailError)
+                Spacer(modifier = Modifier.height(10.dp))
+                PasswordInput(password, isObscured, context, window, passwordError)
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "Forgot password?",
+                    textAlign = TextAlign.End,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { navController.navigate("forgotpassword") }
+                )
+                Spacer(modifier = Modifier.height(110.dp))
+                CustomBTN("Login") {
+                    login()
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                RichTextNav("New to Reada? ", "Register") {
+                    navController.navigate("register")
+                }
+            }
+
+
+        }
+    }
+
+
+}
+
+
+
+
+
