@@ -115,4 +115,9 @@ dependencies {
     // coil
     implementation(libs.coil3.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+
+    // bottom nav
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.navigation.compose)
 }

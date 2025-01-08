@@ -11,6 +11,7 @@ import com.example.readers_app.presentation.screens.entry.EntryScreen
 import com.example.readers_app.presentation.screens.forgot_password.ForgotPasswordScreen
 import com.example.readers_app.presentation.screens.home.HomeScreen
 import com.example.readers_app.presentation.screens.login.LoginScreen
+import com.example.readers_app.presentation.screens.main.BottomNav
 import com.example.readers_app.presentation.screens.profile.ProfileScreen
 import com.example.readers_app.presentation.screens.register.RegisterScreen
 import com.example.readers_app.presentation.screens.splash.SplashScreen
@@ -31,25 +32,6 @@ fun ReadaNavigation() {
             EntryScreen(navController = navController)
         }
 
-        composable(route = Screens.Profile.name) {
-            ProfileScreen(navController = navController)
-        }
-
-        composable(route = Screens.AddBook.name) {
-            AddBookScreen(navController = navController)
-        }
-
-        composable(route = Screens.UpdateBook.name) {
-            UpdateBookScreen(navController = navController)
-        }
-        composable(route = Screens.Stats.name) {
-            StatsScreen(navController = navController)
-        }
-
-        composable(route = Screens.Home.name) {
-            HomeScreen(navController = navController)
-        }
-
         composable(route = Screens.Login.name) {
             LoginScreen(navController = navController)
         }
@@ -60,6 +42,18 @@ fun ReadaNavigation() {
 
         composable(route = Screens.Register.name) {
             RegisterScreen(navController = navController)
+        }
+
+        composable(route = Screens.BottomNav.name) {
+            BottomNav()
+        }
+
+        composable(route = Screens.AddBook.name) {
+            AddBookScreen(navController = navController)
+        }
+
+        composable(route = Screens.UpdateBook.name) {
+            UpdateBookScreen(navController = navController)
         }
 
         composable(route = Screens.Details.name){

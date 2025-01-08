@@ -55,18 +55,20 @@ fun LoginScreen(navController: NavController) {
     val isObscured = remember { mutableStateOf(true) }
 
     fun login() {
-        if (password.value.isNotEmpty() && email.value.isNotEmpty()) {
-            // Handle login
-        } else {
-            if (email.value.isEmpty()) {
-                emailError.value = "Email can not be empty"
-            }
-
-            if (password.value.isEmpty()) {
-                passwordError.value = "Password can not be empty"
-            }
-
-        }
+//        if (password.value.isNotEmpty() && email.value.isNotEmpty()) {
+//            // Handle login
+//            navController.navigate("bottomnav")
+//        } else {
+//            if (email.value.isEmpty()) {
+//                emailError.value = "Email can not be empty"
+//            }
+//
+//            if (password.value.isEmpty()) {
+//                passwordError.value = "Password can not be empty"
+//            }
+//
+//        }
+        navController.navigate("bottomnav")
     }
 
     return Column(

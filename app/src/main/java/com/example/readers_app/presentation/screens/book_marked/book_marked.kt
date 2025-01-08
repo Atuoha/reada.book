@@ -1,4 +1,4 @@
-package com.example.readers_app.presentation.screens.home
+package com.example.readers_app.presentation.screens.book_marked
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
@@ -9,10 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(navController: NavController){
-
+fun BookMarkedScreen(navController: NavController){
     Text(
-        text = "Home Screen",
+        text = "Book Screen",
         modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)
     )
 }
