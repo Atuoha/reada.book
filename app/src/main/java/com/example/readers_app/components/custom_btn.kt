@@ -12,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.readers_app.ui.theme.primary
 
 @Composable
 fun CustomBTN(title: String, onClick: () -> Unit) {
@@ -19,7 +20,7 @@ fun CustomBTN(title: String, onClick: () -> Unit) {
         onClick = {
             onClick()
         },
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        colors = ButtonDefaults.buttonColors(containerColor = primary),
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
