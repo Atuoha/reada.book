@@ -23,6 +23,22 @@ val Typography = Typography(
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
+
+    titleMedium = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 25.sp,
+        letterSpacing = 0.sp
+    ),
+    titleSmall = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.Light,
+        fontSize = 13.sp,
+        lineHeight = 25.sp,
+        letterSpacing = 0.sp
+    ),
+
     labelSmall = TextStyle(
         fontFamily = FontFamily.Serif,
         fontWeight = FontWeight.Medium,
