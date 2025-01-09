@@ -23,6 +23,7 @@ import com.example.readers_app.components.CurrentlyReading
 import com.example.readers_app.components.GetStarted
 import com.example.readers_app.components.SectionWithAll
 import com.example.readers_app.components.SingleBook
+import com.example.readers_app.domain.models.books
 import com.example.readers_app.widgets.TopSection
 
 @SuppressLint("DiscouragedApi")
@@ -31,6 +32,7 @@ fun HomeScreen(navController: NavController) {
     val context = LocalContext.current
     val currentCategoryIndex = remember { mutableIntStateOf(0) }
     val categories = listOf("Fiction", "Non Fiction", "Health", "Technology", "History", "Science")
+
 
     Column(
         modifier = Modifier
@@ -57,14 +59,9 @@ fun HomeScreen(navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(0.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(10) { i ->
-                val image = "b${i + 1}"
-                val drawableId =
-                    context.resources.getIdentifier(
-                        image,
-                        "drawable", context.packageName
-                    )
-                SingleBook(drawableId)
+            items(books.count()) { index ->
+                val book = books[index]
+                SingleBook(book = book)
             }
         }
 

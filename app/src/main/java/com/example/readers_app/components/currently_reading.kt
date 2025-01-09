@@ -2,6 +2,7 @@ package com.example.readers_app.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -107,8 +109,16 @@ fun CurrentlyReading() {
                         )
                     }
 
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Icon(
+                        imageVector = Icons.Default.Bookmark,
+                        contentDescription = "",
+                        tint = primary,
+                        modifier = Modifier.clickable { }
+                    )
                 }
             }
+
         }
     }
 }
