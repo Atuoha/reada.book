@@ -38,6 +38,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.Book
 import com.example.readers_app.domain.models.books
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
@@ -51,7 +52,9 @@ fun DetailsScreen(navController: NavController, id: String) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = {
+                    navController.navigate("${Screens.UpdateBook.name}/${book.id}")
+                },
                 backgroundColor = primary,
                 shape = RoundedCornerShape(10.dp)
             ) {

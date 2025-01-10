@@ -53,8 +53,14 @@ fun ReadaNavigation() {
             AddBookScreen(navController = navController)
         }
 
-        composable(route = Screens.UpdateBook.name) {
-            UpdateBookScreen(navController = navController)
+        composable(
+            route = Screens.UpdateBook.name + "/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val bookId = backStackEntry.arguments?.getString("id") ?: ""
+            UpdateBookScreen(navController = navController, id = bookId)
         }
 
         composable(
