@@ -15,12 +15,12 @@ import androidx.compose.ui.unit.sp
 import com.example.readers_app.ui.theme.primary
 
 @Composable
-fun CustomBTN(title: String, onClick: () -> Unit) {
+fun CustomBTN(title: String,containerColor: Color = primary, onClick: () -> Unit,) {
     Button(
         onClick = {
             onClick()
         },
-        colors = ButtonDefaults.buttonColors(containerColor = primary),
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor),
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(

@@ -1,7 +1,9 @@
 package com.example.readers_app.presentation.screens.update_book
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +48,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.readers_app.components.CustomBTN
+import com.example.readers_app.components.CustomBTNWhiteBG
+import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.Book
 import com.example.readers_app.domain.models.books
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
@@ -59,19 +64,6 @@ fun UpdateBookScreen(navController: NavController, id: String){
     val review = remember { mutableStateOf("") }
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {},
-                backgroundColor = primary,
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = "Save",
-                    tint = Color.White
-                )
-            }
-        },
         topBar = {
             TopAppBar(
                 elevation = 0.dp,
@@ -220,8 +212,6 @@ fun UpdateBookScreen(navController: NavController, id: String){
                 Text(book.description, style = MaterialTheme.typography.bodyMedium)
 
                 Spacer(modifier = Modifier.height(15.dp))
-
-
                     TextInputField(
                         isSingleLine = false,
                         valueState = review,
@@ -232,6 +222,20 @@ fun UpdateBookScreen(navController: NavController, id: String){
                         icon = Icons.Default.RateReview,
                         onAction = KeyboardActions.Default
                     )
+                Spacer(modifier = Modifier.height(15.dp))
+               Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                   Box(modifier = Modifier.fillMaxWidth(0.40f)){
+
+                       CustomBTN("Start Reading") {
+                       }
+                   }
+                   Spacer(modifier = Modifier.width(10.dp))
+
+                   Box(modifier = Modifier.fillMaxWidth(0.70f)){
+                       CustomBTN("Stop Reading", containerColor = Color.LightGray) {
+                       }
+                   }
+               }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
         }

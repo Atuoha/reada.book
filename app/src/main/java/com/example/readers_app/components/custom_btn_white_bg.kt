@@ -13,11 +13,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CustomBTNWhiteBG(title:String, onClick: () -> Unit) {
+fun CustomBTNWhiteBG(title:String,containerColor: Color = Color.White, onClick: () -> Unit) {
     Button(
         onClick = {
             onClick()
-        }, colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+        }, colors = ButtonDefaults.buttonColors(containerColor = containerColor),
         border = ButtonDefaults.outlinedButtonBorder, modifier = Modifier.fillMaxWidth()
     ) {
         Text(
