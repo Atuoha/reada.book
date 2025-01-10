@@ -1,6 +1,5 @@
 package com.example.readers_app.presentation.screens.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,8 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.readers_app.components.CarouselComponent
@@ -27,10 +24,9 @@ import com.example.readers_app.components.SingleBook
 import com.example.readers_app.domain.models.books
 import com.example.readers_app.widgets.TopSection
 
-@SuppressLint("DiscouragedApi")
+
 @Composable
 fun HomeScreen(navController: NavController) {
-    val context = LocalContext.current
     val currentCategoryIndex = remember { mutableIntStateOf(0) }
     val categories = listOf("Fiction", "Non Fiction", "Health", "Technology", "History", "Science")
 

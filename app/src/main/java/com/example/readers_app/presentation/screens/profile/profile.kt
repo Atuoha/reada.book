@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.readers_app.R
+import com.example.readers_app.components.ProfileLink
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -87,14 +88,3 @@ fun ProfileScreen(navController: NavController) {
     }
 }
 
-@Composable
-fun ProfileLink(title: String, hasDivider: Boolean = true, onClick: () -> Unit) {
-    Text(text = title,
-        style = MaterialTheme.typography.titleSmall,
-        modifier = Modifier.clickable {
-            onClick()
-        }
-    )
-    Spacer(modifier = Modifier.height(15.dp))
-    if (hasDivider) HorizontalDivider(thickness = 0.3.dp)
-}

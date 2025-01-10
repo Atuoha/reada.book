@@ -5,10 +5,12 @@ import android.annotation.SuppressLint
 import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FloatingActionButton
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ShowChart
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -32,11 +34,18 @@ import com.example.readers_app.ui.theme.primary
 fun BottomNav() {
     val navController = rememberNavController()
 
-    return Scaffold(bottomBar = { BottomBar(navController) }) {
+    return Scaffold(
+        floatingActionButton = {
+         if (navController.currentBackStackEntryAsState().value?.destination?.route == "home") FloatingActionButton(onClick = {},backgroundColor = primary) {
+              Icon(imageVector = Icons.Default.Add, contentDescription = "Add", tint = Color.White)
+          }
+        },
+
+
+        bottomBar = { BottomBar(navController) }) {
         NavHost(
             navController = navController,
             startDestination = "home",
-//            modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") { HomeScreen(navController) }
             composable("bookmarked") { BookMarkedScreen(navController) }
