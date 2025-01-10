@@ -26,6 +26,7 @@ import com.example.readers_app.R
 import com.example.readers_app.components.CustomBTN
 import com.example.readers_app.components.CustomBTNWhiteBG
 import com.example.readers_app.components.SectionText
+import com.example.readers_app.core.enums.Screens
 
 @Composable
 fun EntryScreen(navController: NavController) {
@@ -57,11 +58,11 @@ fun EntryScreen(navController: NavController) {
         SectionText("Hi, welcome to Reada!", "Please login or register to continue")
         Spacer(modifier = Modifier.height(50.dp))
         CustomBTNWhiteBG("Login") {
-            navController.navigate("login")
+            navController.navigate(Screens.Login.name)
         }
         Spacer(modifier = Modifier.height(10.dp))
         CustomBTN("Register") {
-            navController.navigate("register")
+            navController.navigate(Screens.Register.name)
         }
 
     }

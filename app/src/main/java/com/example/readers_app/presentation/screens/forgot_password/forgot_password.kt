@@ -34,6 +34,7 @@ import com.example.readers_app.components.CustomBTN
 import com.example.readers_app.components.EmailInput
 import com.example.readers_app.components.RichTextNav
 import com.example.readers_app.components.TopText
+import com.example.readers_app.core.enums.Screens
 
 @Composable
 fun ForgotPasswordScreen(navController: NavController) {
@@ -106,7 +107,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 RichTextNav("Remembered password? ", "Login") {
-                    navController.navigate("login")
+                    navController.navigate(Screens.Login.name)
                 }
             }
 

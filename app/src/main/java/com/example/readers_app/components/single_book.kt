@@ -35,13 +35,13 @@ import com.example.readers_app.domain.models.Book
 import com.example.readers_app.ui.theme.primary
 
 @Composable
-fun SingleBook(book: Book) {
+fun SingleBook(book: Book,onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .padding(start = 7.dp, top = 7.dp)
             .background(color = Color.White, shape = RoundedCornerShape(10.dp))
             .fillMaxWidth()
-            .height(165.dp)
+            .height(165.dp).clickable { onClick() }
     ) {
         Row(
             modifier = Modifier

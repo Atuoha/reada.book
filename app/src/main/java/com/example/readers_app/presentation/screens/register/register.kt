@@ -34,6 +34,7 @@ import com.example.readers_app.components.PasswordInput
 import com.example.readers_app.components.RichTextNav
 import com.example.readers_app.components.TopText
 import com.example.readers_app.components.UsernameInput
+import com.example.readers_app.core.enums.Screens
 
 @Composable
 fun RegisterScreen(navController: NavController) {
@@ -116,7 +117,7 @@ fun RegisterScreen(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 RichTextNav("Already own an account? ", "Login") {
-                    navController.navigate("login")
+                    navController.navigate(Screens.Login.name)
                 }
             }
 

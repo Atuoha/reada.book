@@ -1,4 +1,4 @@
-package com.example.readers_app.components
+package com.example.readers_app.presentation.screens.profile.widgets
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer

@@ -15,14 +15,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.readers_app.components.CarouselComponent
-import com.example.readers_app.components.CategorySection
-import com.example.readers_app.components.CurrentlyReading
-import com.example.readers_app.components.GetStarted
 import com.example.readers_app.components.SectionWithAll
 import com.example.readers_app.components.SingleBook
+import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.books
+import com.example.readers_app.presentation.screens.home.widgets.CarouselComponent
+import com.example.readers_app.presentation.screens.home.widgets.CategorySection
+import com.example.readers_app.presentation.screens.home.widgets.CurrentlyReading
+import com.example.readers_app.presentation.screens.home.widgets.GetStarted
 import com.example.readers_app.widgets.TopSection
+
 
 
 @Composable
@@ -58,7 +60,9 @@ fun HomeScreen(navController: NavController) {
         ) {
             items(books.count()) { index ->
                 val book = books[index]
-                SingleBook(book = book)
+                SingleBook(book = book){
+                    navController.navigate("${Screens.Details.name}/${book.id}")
+                }
             }
         }
 

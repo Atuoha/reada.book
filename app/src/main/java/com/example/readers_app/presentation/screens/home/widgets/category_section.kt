@@ -1,4 +1,4 @@
-package com.example.readers_app.components
+package com.example.readers_app.presentation.screens.home.widgets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

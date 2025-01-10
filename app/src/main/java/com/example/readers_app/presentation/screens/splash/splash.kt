@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.readers_app.R
+import com.example.readers_app.core.enums.Screens
 import kotlinx.coroutines.delay
 
 @Composable
@@ -50,8 +51,8 @@ fun SplashScreen(navController: NavController) {
         )
 
         delay(3000)
-        navController.navigate("entry") {
-            popUpTo("splash") { inclusive = true }
+        navController.navigate(Screens.Entry.name) {
+            popUpTo(Screens.Splash.name) { inclusive = true }
         }
     })
 

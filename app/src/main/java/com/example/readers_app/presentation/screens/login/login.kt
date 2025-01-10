@@ -36,6 +36,7 @@ import com.example.readers_app.components.EmailInput
 import com.example.readers_app.components.PasswordInput
 import com.example.readers_app.components.RichTextNav
 import com.example.readers_app.components.TopText
+import com.example.readers_app.core.enums.Screens
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -112,7 +113,7 @@ fun LoginScreen(navController: NavController) {
                     color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navController.navigate("forgotpassword") }
+                        .clickable { navController.navigate(Screens.ForgotPassword.name) }
                 )
                 Spacer(modifier = Modifier.height(110.dp))
                 CustomBTN("Login") {
@@ -120,7 +121,7 @@ fun LoginScreen(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 RichTextNav("New to Reada? ", "Register") {
-                    navController.navigate("register")
+                    navController.navigate(Screens.Register.name)
                 }
             }
 

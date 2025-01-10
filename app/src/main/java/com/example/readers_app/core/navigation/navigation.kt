@@ -1,22 +1,23 @@
 package com.example.readers_app.core.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.readers_app.core.enums.Screens
+import com.example.readers_app.domain.models.Book
 import com.example.readers_app.presentation.screens.add_book.AddBookScreen
 import com.example.readers_app.presentation.screens.details.DetailsScreen
 import com.example.readers_app.presentation.screens.entry.EntryScreen
 import com.example.readers_app.presentation.screens.forgot_password.ForgotPasswordScreen
-import com.example.readers_app.presentation.screens.home.HomeScreen
 import com.example.readers_app.presentation.screens.login.LoginScreen
 import com.example.readers_app.presentation.screens.main.BottomNav
-import com.example.readers_app.presentation.screens.profile.ProfileScreen
 import com.example.readers_app.presentation.screens.register.RegisterScreen
 import com.example.readers_app.presentation.screens.splash.SplashScreen
-import com.example.readers_app.presentation.screens.stats.StatsScreen
 import com.example.readers_app.presentation.screens.update_book.UpdateBookScreen
+import com.google.gson.Gson
 
 @Composable
 fun ReadaNavigation() {
@@ -45,7 +46,7 @@ fun ReadaNavigation() {
         }
 
         composable(route = Screens.BottomNav.name) {
-            BottomNav()
+            BottomNav(navigationController = navController)
         }
 
         composable(route = Screens.AddBook.name) {
@@ -56,8 +57,14 @@ fun ReadaNavigation() {
             UpdateBookScreen(navController = navController)
         }
 
-        composable(route = Screens.Details.name){
-            DetailsScreen(navController = navController)
+        composable(
+            route = Screens.Details.name + "/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val bookId = backStackEntry.arguments?.getString("id") ?: ""
+            DetailsScreen(navController = navController, id = bookId)
         }
     }
 
