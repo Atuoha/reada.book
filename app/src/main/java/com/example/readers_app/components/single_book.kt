@@ -103,7 +103,7 @@ fun SingleBook(book: Book) {
                 Icon(imageVector = Icons.Default.Bookmark,
                     contentDescription = "",
                     tint = primary, modifier = Modifier
-                        .size(10.dp)
+                        .size(15.dp)
                         .clickable { })
             }
         }
