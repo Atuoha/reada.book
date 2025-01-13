@@ -161,6 +161,8 @@ fun LoginScreen(navController: NavController) {
                     )
                 }
                 Spacer(modifier = Modifier.height(110.dp))
+
+                if(!loading.value)
                 CustomBTN("Login") {
                     login()
                 }

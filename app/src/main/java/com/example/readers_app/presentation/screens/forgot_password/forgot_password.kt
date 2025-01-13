@@ -137,6 +137,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                     )
                 }
                 Spacer(modifier = Modifier.height(220.dp))
+                if(!loading.value)
                 CustomBTN("Forgot Password") {
                     forgotPassword()
                 }
