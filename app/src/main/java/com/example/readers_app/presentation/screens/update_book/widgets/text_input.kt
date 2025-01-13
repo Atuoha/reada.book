@@ -30,15 +30,14 @@ fun TextInputField(
     imeAction: ImeAction,
     icon: ImageVector,
     onAction: KeyboardActions = KeyboardActions.Default,
+    placeholder: String,
 ) {
     return OutlinedTextField(
         value = valueState.value,
         onValueChange = { newValue ->
-            if (newValue.all { char ->
-                    char.isWhitespace() || char.isLetter()
-                }) valueState.value = newValue
+             valueState.value = newValue
         },
-        placeholder = {Text("Your thoughts")},
+        placeholder = {Text(placeholder)},
         modifier = Modifier
             .fillMaxWidth()
             .then(

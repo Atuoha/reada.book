@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.readers_app.R
 import com.example.readers_app.core.enums.Screens
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
@@ -51,9 +52,17 @@ fun SplashScreen(navController: NavController) {
         )
 
         delay(3000)
-        navController.navigate(Screens.Entry.name) {
-            popUpTo(Screens.Splash.name) { inclusive = true }
+
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            navController.navigate(Screens.BottomNav.name) {
+                popUpTo(Screens.Splash.name) { inclusive = true }
+            }
+        } else {
+            navController.navigate(Screens.Login.name) {
+                popUpTo(Screens.Splash.name) { inclusive = true }
+            }
         }
+
     })
 
 

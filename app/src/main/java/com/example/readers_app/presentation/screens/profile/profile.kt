@@ -11,10 +11,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.presentation.screens.profile.widgets.ConfirmLogout
 import com.example.readers_app.presentation.screens.profile.widgets.ProfileImageSection
 import com.example.readers_app.presentation.screens.profile.widgets.ProfileLink
 import com.example.readers_app.presentation.screens.profile.widgets.TopTextSection
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -51,10 +53,15 @@ fun ProfileScreen(navController: NavController) {
             showLogoutDialog.value = true
         }
 
-        if(showLogoutDialog.value){
+        if (showLogoutDialog.value) {
             ConfirmLogout(
-                showLogoutDialog){
-
+                showLogoutDialog
+            ) {
+                FirebaseAuth.getInstance().signOut().run {
+                    navController.navigate(Screens.Entry.name) {
+                        popUpTo(0)
+                    }
+                }
             }
         }
     }

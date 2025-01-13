@@ -1,12 +1,10 @@
 package com.example.readers_app.presentation.screens.main
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
@@ -19,12 +17,14 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.BottomNavItem
 import com.example.readers_app.presentation.screens.book_marked.BookMarkedScreen
 import com.example.readers_app.presentation.screens.home.HomeScreen
@@ -40,7 +40,10 @@ fun BottomNav(navigationController: NavController) {
 
     return Scaffold(
         floatingActionButton = {
-         if (navController.currentBackStackEntryAsState().value?.destination?.route == "home") FloatingActionButton(onClick = {},backgroundColor = primary,shape = RoundedCornerShape(10.dp)) {
+         if (navController.currentBackStackEntryAsState().value?.destination?.route == "home") FloatingActionButton(onClick = {
+             navigationController.navigate(Screens.AddBook.name)
+
+         },backgroundColor = primary,shape = RoundedCornerShape(10.dp)) {
               Icon(imageVector = Icons.Default.Add, contentDescription = "Add", tint = Color.White)
           }
         },

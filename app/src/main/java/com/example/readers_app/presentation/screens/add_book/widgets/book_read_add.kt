@@ -1,4 +1,4 @@
-package com.example.readers_app.components
+package com.example.readers_app.presentation.screens.add_book.widgets
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,7 +37,7 @@ import com.example.readers_app.ui.theme.primary
 
 
 @Composable
-fun BookRead(index: Int, book: Book) {
+fun BookReadAdd(index: Int, book: Book) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,7 +118,7 @@ fun BookRead(index: Int, book: Book) {
                     )
 
                     Spacer(modifier = Modifier.height(15.dp))
-                    Text( if(index % 2 == 0 ) "Started January 6th" else "Finished Dec 10th",style = TextStyle(color = Color.LightGray, fontFamily = FontFamily.Serif, fontSize = 13.sp))
+                    Text( if(index % 2 == 0 ) "Added" else "Yet to add",style = TextStyle(color = Color.LightGray, fontFamily = FontFamily.Serif, fontSize = 13.sp))
                 }
             }
 

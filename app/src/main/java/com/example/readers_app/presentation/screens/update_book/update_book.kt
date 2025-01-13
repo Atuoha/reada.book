@@ -1,6 +1,5 @@
 package com.example.readers_app.presentation.screens.update_book
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,8 +19,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
@@ -49,8 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.readers_app.components.CustomBTN
-import com.example.readers_app.components.CustomBTNWhiteBG
-import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.Book
 import com.example.readers_app.domain.models.books
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
@@ -58,12 +55,19 @@ import com.example.readers_app.presentation.screens.update_book.widgets.TextInpu
 import com.example.readers_app.ui.theme.primary
 
 @Composable
-fun UpdateBookScreen(navController: NavController, id: String){
+fun UpdateBookScreen(navController: NavController, id: String = "3"){
     val book: Book = books.find { it.id == id } ?: return
     val starCount = remember { mutableIntStateOf(0) }
     val review = remember { mutableStateOf("") }
 
     Scaffold(
+        floatingActionButton = {
+           FloatingActionButton(onClick = {
+
+            },backgroundColor = primary,shape = RoundedCornerShape(10.dp)) {
+                androidx.compose.material.Icon(imageVector = Icons.Default.Save, contentDescription = "Add", tint = Color.White)
+            }
+        },
         topBar = {
             TopAppBar(
                 elevation = 0.dp,
@@ -78,7 +82,7 @@ fun UpdateBookScreen(navController: NavController, id: String){
                 },
                 title = {
                     Text(
-                        "Update Book",
+                        "Book Section",
                         style = TextStyle(
                             color = Color.Black,
                             fontSize = 18.sp,
@@ -220,7 +224,8 @@ fun UpdateBookScreen(navController: NavController, id: String){
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                         icon = Icons.Default.RateReview,
-                        onAction = KeyboardActions.Default
+                        onAction = KeyboardActions.Default,
+                        placeholder = "Your thoughts"
                     )
                 Spacer(modifier = Modifier.height(15.dp))
                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {

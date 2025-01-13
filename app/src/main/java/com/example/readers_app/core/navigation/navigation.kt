@@ -1,6 +1,7 @@
 package com.example.readers_app.core.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,10 +18,13 @@ import com.example.readers_app.presentation.screens.main.BottomNav
 import com.example.readers_app.presentation.screens.register.RegisterScreen
 import com.example.readers_app.presentation.screens.splash.SplashScreen
 import com.example.readers_app.presentation.screens.update_book.UpdateBookScreen
+import com.google.firebase.FirebaseApp
 import com.google.gson.Gson
 
 @Composable
 fun ReadaNavigation() {
+    val context = LocalContext.current
+    FirebaseApp.initializeApp(context)
 
     val navController = rememberNavController()
 
