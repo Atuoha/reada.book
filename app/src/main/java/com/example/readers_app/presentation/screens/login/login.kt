@@ -1,6 +1,7 @@
 package com.example.readers_app.presentation.screens.login
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -78,6 +79,7 @@ fun LoginScreen(navController: NavController) {
                            error.value = ""
                            loading.value = false
                            navController.navigate(Screens.BottomNav.name)
+                           Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
                        }else{
                            loading.value = false
                            error.value = "Please verify your email"

@@ -1,5 +1,6 @@
 package com.example.readers_app.presentation.screens.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.readers_app.core.enums.Screens
@@ -21,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun ProfileScreen(navController: NavController) {
     val showLogoutDialog = remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -61,6 +63,8 @@ fun ProfileScreen(navController: NavController) {
                     navController.navigate(Screens.Entry.name) {
                         popUpTo(0)
                     }
+                    Toast.makeText(context, "Logout Successful", Toast.LENGTH_SHORT).show()
+
                 }
             }
         }

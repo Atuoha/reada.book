@@ -1,6 +1,7 @@
 package com.example.readers_app.presentation.screens.register
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -90,6 +91,7 @@ fun RegisterScreen(navController: NavController) {
                         error.value = ""
                         loading.value = false
                         navController.navigate(Screens.Login.name)
+                        Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
                     } else {
                         loading.value = false
                         error.value = it.exception?.message.toString()

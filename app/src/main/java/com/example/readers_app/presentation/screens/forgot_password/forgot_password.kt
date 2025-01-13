@@ -2,6 +2,7 @@ package com.example.readers_app.presentation.screens.forgot_password
 
 import android.app.Activity
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -65,6 +66,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                     error.value = ""
                     loading.value = false
                     navController.navigate(Screens.Login.name)
+                    Toast.makeText(context, "Forgot password link sent", Toast.LENGTH_SHORT).show()
                 }else{
                     loading.value = false
                     error.value = it.exception?.localizedMessage ?: ""
