@@ -152,7 +152,7 @@ fun RegisterScreen(navController: NavController) {
                 }
 
                 Spacer(modifier = Modifier.height(80.dp))
-                if (loading.value)
+                if (!loading.value)
                     CustomBTN("Register") {
                         register()
                     }

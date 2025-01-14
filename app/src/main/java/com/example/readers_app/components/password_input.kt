@@ -34,7 +34,8 @@ import androidx.compose.ui.unit.dp
     isObscured: MutableState<Boolean>,
     context: Context,
     window: Window,
-    passwordError: MutableState<String>
+    passwordError: MutableState<String>,
+    labelAndHint: String = "Password",
 ) {
     OutlinedTextField(
         value = password.value,
@@ -58,7 +59,7 @@ import androidx.compose.ui.unit.dp
         visualTransformation = if (isObscured.value) PasswordVisualTransformation() else VisualTransformation.None,
         placeholder = {
             Text(
-                "Password",
+                labelAndHint,
                 style = MaterialTheme.typography.bodyMedium
             )
         },
@@ -87,7 +88,7 @@ import androidx.compose.ui.unit.dp
             }
         },
         isError = passwordError.value.isNotEmpty() && (password.value.isEmpty() || password.value.length < 8),
-        label = { Text("Password") },
+        label = { Text(labelAndHint) },
         modifier = Modifier
             .fillMaxWidth(),
 

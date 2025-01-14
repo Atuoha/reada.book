@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.infrastructure.view_model.UserViewModel
 import com.example.readers_app.presentation.screens.profile.widgets.ConfirmDialog
 import com.example.readers_app.presentation.screens.profile.widgets.ProfileImageSection
@@ -39,11 +40,11 @@ fun ProfileScreen(navController: NavController) {
         ProfileImageSection()
         Spacer(modifier = Modifier.height(20.dp))
         ProfileLink("Edit Profile") {
-
+            navController.navigate(Screens.EditProfile.name)
         }
         Spacer(modifier = Modifier.height(15.dp))
         ProfileLink("Change Password") {
-
+            navController.navigate(Screens.EditPassword.name)
         }
         Spacer(modifier = Modifier.height(15.dp))
         ProfileLink("Privacy Policy") {

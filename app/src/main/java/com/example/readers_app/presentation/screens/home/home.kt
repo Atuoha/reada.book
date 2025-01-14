@@ -43,6 +43,7 @@ fun HomeScreen(navController: NavController) {
             GetStarted()
             Spacer(modifier = Modifier.height(10.dp))
             SectionWithAll(title = "Currently Reading") {
+                navController.navigate(Screens.CurrentlyReading.name)
             }
             Spacer(modifier = Modifier.height(5.dp))
             CurrentlyReading()

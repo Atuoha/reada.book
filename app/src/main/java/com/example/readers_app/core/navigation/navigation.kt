@@ -10,11 +10,14 @@ import androidx.navigation.navArgument
 import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.Book
 import com.example.readers_app.presentation.screens.add_book.AddBookScreen
+import com.example.readers_app.presentation.screens.currently_reading.CurrentlyReadingScreen
 import com.example.readers_app.presentation.screens.details.DetailsScreen
 import com.example.readers_app.presentation.screens.entry.EntryScreen
 import com.example.readers_app.presentation.screens.forgot_password.ForgotPasswordScreen
 import com.example.readers_app.presentation.screens.login.LoginScreen
 import com.example.readers_app.presentation.screens.main.BottomNav
+import com.example.readers_app.presentation.screens.profile.edit_profile.EditPasswordScreen
+import com.example.readers_app.presentation.screens.profile.edit_profile.EditProfileScreen
 import com.example.readers_app.presentation.screens.register.RegisterScreen
 import com.example.readers_app.presentation.screens.splash.SplashScreen
 import com.example.readers_app.presentation.screens.update_book.UpdateBookScreen
@@ -75,6 +78,18 @@ fun ReadaNavigation() {
         ) { backStackEntry ->
             val bookId = backStackEntry.arguments?.getString("id") ?: ""
             DetailsScreen(navController = navController, id = bookId)
+        }
+
+        composable(route = Screens.CurrentlyReading.name){
+            CurrentlyReadingScreen(navController = navController)
+        }
+
+        composable(route = Screens.EditPassword.name){
+            EditPasswordScreen(navController = navController)
+        }
+
+        composable(route = Screens.EditProfile.name){
+            EditProfileScreen(navController = navController)
         }
     }
 
