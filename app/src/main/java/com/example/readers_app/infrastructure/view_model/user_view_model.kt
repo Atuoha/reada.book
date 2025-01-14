@@ -19,11 +19,19 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) : ViewModel() {
 
     fun logout(navController: NavController, context: Context) {
-        FirebaseAuth.getInstance().signOut().run {
-            navController.navigate(Screens.Entry.name) {
-                popUpTo(0)
+        try {
+            FirebaseAuth.getInstance().signOut().run {
+                navController.navigate(Screens.Entry.name) {
+                    popUpTo(0)
+                }
+                Toast.makeText(context, "Logout Successful", Toast.LENGTH_SHORT).show()
             }
-            Toast.makeText(context, "Logout Successful", Toast.LENGTH_SHORT).show()
+        }catch (e: Exception){
+            Toast.makeText(
+                context,
+                "Logout Failed. Please try again.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -45,27 +53,35 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     ) {
         error.value = ""
         loading.value = true
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = task.result?.user
-                    if (user != null) {
-                        if (user.isEmailVerified) {
-                            error.value = ""
-                            loading.value = false
-                            navController.navigate(Screens.BottomNav.name)
-                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                        } else {
-                            loading.value = false
-                            error.value = "Please verify your email"
-                            user.sendEmailVerification()
+
+        try {
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val user = task.result?.user
+                        if (user != null) {
+                            if (user.isEmailVerified) {
+                                error.value = ""
+                                loading.value = false
+                                navController.navigate(Screens.BottomNav.name)
+                                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                            } else {
+                                loading.value = false
+                                error.value = "Please verify your email"
+                                user.sendEmailVerification()
+                            }
                         }
+                    } else {
+                        loading.value = false
+                        error.value = task.exception?.message.orEmpty()
                     }
-                } else {
-                    loading.value = false
-                    error.value = task.exception?.message.orEmpty()
                 }
-            }
+        }catch (e: Exception){
+            error.value = e.message.toString()
+            loading.value = false
+        }
+
+
     }
 
     fun createUserWithEmailAndPassword(
@@ -79,43 +95,51 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     ) {
         error.value = ""
         loading.value = true
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = task.result?.user
-                    if (user != null) {
-                        // Save user details to Firestore
-                        Firebase.firestore.collection("users").document(user.uid).set(
-                            mapOf(
-                                "username" to username,
-                                "email" to email,
-                                "userId" to user.uid,
-                                "avatar" to AppStrings.AVATAR_URL
-                            )
-                        ).addOnCompleteListener { firestoreTask ->
-                            if (firestoreTask.isSuccessful) {
-                                // Send email verification
-                                user.sendEmailVerification()
-                                error.value = ""
-                                loading.value = false
-                                navController.navigate(Screens.Login.name)
-                                Toast.makeText(
-                                    context,
-                                    "Registration Successful. Please verify your email.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                loading.value = false
-                                error.value =
-                                    "Failed to save user data: ${firestoreTask.exception?.message}"
+
+        try {
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val user = task.result?.user
+                        if (user != null) {
+                            // Save user details to Firestore
+                            Firebase.firestore.collection("users").document(user.uid).set(
+                                mapOf(
+                                    "username" to username,
+                                    "email" to email,
+                                    "userId" to user.uid,
+                                    "avatar" to AppStrings.AVATAR_URL
+                                )
+                            ).addOnCompleteListener { firestoreTask ->
+                                if (firestoreTask.isSuccessful) {
+                                    // Send email verification
+                                    user.sendEmailVerification()
+                                    error.value = ""
+                                    loading.value = false
+                                    navController.navigate(Screens.Login.name)
+                                    Toast.makeText(
+                                        context,
+                                        "Registration Successful. Please verify your email.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    loading.value = false
+                                    error.value =
+                                        "Failed to save user data: ${firestoreTask.exception?.message}"
+                                }
                             }
                         }
+                    } else {
+                        loading.value = false
+                        error.value = task.exception?.message.orEmpty()
                     }
-                } else {
-                    loading.value = false
-                    error.value = task.exception?.message.orEmpty()
                 }
-            }
+        }catch (e: Exception){
+            error.value = e.message.toString()
+            loading.value = false
+        }
+
+
     }
 
 
@@ -128,6 +152,14 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     ) {
         loading.value = true
         error.value = ""
+
+        try {
+
+        }catch (e: Exception){
+            error.value = e.message.toString()
+            loading.value = false
+        }
+
         FirebaseAuth.getInstance().sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -147,20 +179,27 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
 
 
     fun deleteAccount(navController: NavController, context: Context) {
-        firebaseAuth.currentUser?.delete()?.addOnCompleteListener { task ->
-
-            if (task.isSuccessful) {
-
-                Firebase.firestore.collection("users").document(firebaseAuth.currentUser!!.uid).delete().addOnCompleteListener { deleteTask ->
-                    if (deleteTask.isSuccessful) {
-                        navController.navigate(Screens.Entry.name) {
-                            popUpTo(0)
+        try {
+            firebaseAuth.currentUser?.delete()?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Firebase.firestore.collection("users").document(firebaseAuth.currentUser!!.uid).delete().addOnCompleteListener { deleteTask ->
+                        if (deleteTask.isSuccessful) {
+                            navController.navigate(Screens.Entry.name) {
+                                popUpTo(0)
+                            }
+                            Toast.makeText(context, "Account Deleted", Toast.LENGTH_SHORT).show()
                         }
-                        Toast.makeText(context, "Account Deleted", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
+        }catch (e: Exception){
+            Toast.makeText(
+                context,
+                "Account Deletion Failed. Please try again.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
+
     }
 
 
