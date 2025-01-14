@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.enums.Screens
+import com.example.readers_app.domain.models.ReadaUser
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -102,14 +103,12 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
                     if (task.isSuccessful) {
                         val user = task.result?.user
                         if (user != null) {
+
+                            val readaUser = ReadaUser(user.uid,username, email, AppStrings.AVATAR_URL)
+
                             // Save user details to Firestore
                             Firebase.firestore.collection("users").document(user.uid).set(
-                                mapOf(
-                                    "username" to username,
-                                    "email" to email,
-                                    "userId" to user.uid,
-                                    "avatar" to AppStrings.AVATAR_URL
-                                )
+                               readaUser.toMap()
                             ).addOnCompleteListener { firestoreTask ->
                                 if (firestoreTask.isSuccessful) {
                                     // Send email verification
