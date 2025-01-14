@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.readers_app.R
 import com.example.readers_app.components.CustomBTN
@@ -41,11 +42,13 @@ import com.example.readers_app.components.PasswordInput
 import com.example.readers_app.components.RichTextNav
 import com.example.readers_app.components.TopText
 import com.example.readers_app.core.enums.Screens
+import com.example.readers_app.infrastructure.view_model.UserViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(navController: NavController) {
+    val userViewModel = hiltViewModel<UserViewModel>()
     val context = LocalContext.current
 
     val window = (context as Activity).window
@@ -69,30 +72,10 @@ fun LoginScreen(navController: NavController) {
     fun login() {
         if (valid) {
             // Handle login
-            loading.value = true
-            error.value = ""
-           FirebaseAuth.getInstance().signInWithEmailAndPassword(email.value, password.value).addOnCompleteListener {
-               if(it.isSuccessful){
-                   val user = it.result.user
-                   if (user != null) {
-                       if(user.isEmailVerified){
-                           error.value = ""
-                           loading.value = false
-                           navController.navigate(Screens.BottomNav.name)
-                           Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                       }else{
-                           loading.value = false
-                           error.value = "Please verify your email"
-                           user.sendEmailVerification()
-                       }
-                   }
-
-
-               }else{
-                   loading.value = false
-                   error.value = it.exception?.message.toString()
-               }
-           }
+            userViewModel.signInWithEmailAndPassword(
+                email.value, password.value,
+                navController, context, loading, error
+            )
         } else {
             if (email.value.isEmpty()) {
                 emailError.value = "Email can not be empty"
@@ -152,20 +135,22 @@ fun LoginScreen(navController: NavController) {
                         .fillMaxWidth()
                         .clickable { navController.navigate(Screens.ForgotPassword.name) }
                 )
-                if(loading.value){
+                if (loading.value) {
                     Spacer(modifier = Modifier.height(30.dp))
                     CircularProgressIndicator(
-                        modifier = Modifier.width(64.dp).align(Alignment.CenterHorizontally),
+                        modifier = Modifier
+                            .width(64.dp)
+                            .align(Alignment.CenterHorizontally),
                         color = MaterialTheme.colorScheme.primary,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 }
                 Spacer(modifier = Modifier.height(110.dp))
 
-                if(!loading.value)
-                CustomBTN("Login") {
-                    login()
-                }
+                if (!loading.value)
+                    CustomBTN("Login") {
+                        login()
+                    }
                 Spacer(modifier = Modifier.height(10.dp))
                 RichTextNav("New to Reada? ", "Register") {
                     navController.navigate(Screens.Register.name)

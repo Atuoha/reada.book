@@ -26,14 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.readers_app.R
 import com.example.readers_app.core.enums.Screens
+import com.example.readers_app.infrastructure.view_model.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController) {
+    val userViewModel = hiltViewModel<UserViewModel>()
 
 
     val scale = remember {
@@ -53,11 +56,11 @@ fun SplashScreen(navController: NavController) {
 
         delay(3000)
 
-        if (FirebaseAuth.getInstance().currentUser != null) {
+        if(userViewModel.isUserLoggedIn()){
             navController.navigate(Screens.BottomNav.name) {
                 popUpTo(Screens.Splash.name) { inclusive = true }
             }
-        } else {
+        }else{
             navController.navigate(Screens.Login.name) {
                 popUpTo(Screens.Splash.name) { inclusive = true }
             }

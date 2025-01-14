@@ -7,9 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 
 @Composable
-fun ConfirmLogout(
+fun ConfirmDialog(
     showLogoutDialog: MutableState<Boolean>,
-    logout: () -> Unit
+    title: String,
+    text: String,
+    logout: () -> Unit,
+
 ) {
     AlertDialog(
         onDismissRequest = { showLogoutDialog.value = false },
@@ -25,7 +28,7 @@ fun ConfirmLogout(
                 Text("Cancel")
             }
         },
-        title = { Text("Logout") },
-        text = { Text("Are you sure you want to logout?") }
+        title = { Text(title) },
+        text = { Text(text) }
     )
 }

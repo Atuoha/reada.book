@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.readers_app.R
 import com.example.readers_app.components.CustomBTN
@@ -40,11 +41,14 @@ import com.example.readers_app.components.EmailInput
 import com.example.readers_app.components.RichTextNav
 import com.example.readers_app.components.TopText
 import com.example.readers_app.core.enums.Screens
+import com.example.readers_app.infrastructure.view_model.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ForgotPasswordScreen(navController: NavController) {
     val context = LocalContext.current
+    val userViewModel = hiltViewModel<UserViewModel>()
+
     val window = (context as Activity).window
     SideEffect {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -59,19 +63,10 @@ fun ForgotPasswordScreen(navController: NavController) {
     fun forgotPassword() {
         if (email.value.isNotEmpty()) {
             // Handle forgot password
-            loading.value = true
-            error.value = ""
-            FirebaseAuth.getInstance().sendPasswordResetEmail(email.value).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    error.value = ""
-                    loading.value = false
-                    navController.navigate(Screens.Login.name)
-                    Toast.makeText(context, "Forgot password link sent", Toast.LENGTH_SHORT).show()
-                }else{
-                    loading.value = false
-                    error.value = it.exception?.localizedMessage ?: ""
-                }
-            }
+            userViewModel.resetPassword(
+                email.value,
+                navController, context, loading, error
+            )
 
         } else {
             if (email.value.isEmpty()) {
@@ -103,10 +98,12 @@ fun ForgotPasswordScreen(navController: NavController) {
                 )
         ) {
             Column(
-                modifier = Modifier.padding(
-                    horizontal = 25.dp,
-                    vertical = 28.dp
-                ) .verticalScroll(rememberScrollState())
+                modifier = Modifier
+                    .padding(
+                        horizontal = 25.dp,
+                        vertical = 28.dp
+                    )
+                    .verticalScroll(rememberScrollState())
             ) {
                 TopText("Forgot Password", "Enter your email to reset password")
                 Spacer(modifier = Modifier.height(40.dp))
@@ -128,19 +125,21 @@ fun ForgotPasswordScreen(navController: NavController) {
                     Text(error.value, color = MaterialTheme.colorScheme.error)
                 }
 
-                if(loading.value){
+                if (loading.value) {
                     Spacer(modifier = Modifier.height(30.dp))
                     CircularProgressIndicator(
-                        modifier = Modifier.width(64.dp).align(Alignment.CenterHorizontally),
+                        modifier = Modifier
+                            .width(64.dp)
+                            .align(Alignment.CenterHorizontally),
                         color = MaterialTheme.colorScheme.primary,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 }
                 Spacer(modifier = Modifier.height(220.dp))
-                if(!loading.value)
-                CustomBTN("Forgot Password") {
-                    forgotPassword()
-                }
+                if (!loading.value)
+                    CustomBTN("Forgot Password") {
+                        forgotPassword()
+                    }
                 Spacer(modifier = Modifier.height(10.dp))
                 RichTextNav("Remembered password? ", "Login") {
                     navController.navigate(Screens.Login.name)

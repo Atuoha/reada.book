@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.readers_app.R
 import com.example.readers_app.components.CustomBTN
@@ -41,12 +42,14 @@ import com.example.readers_app.components.TopText
 import com.example.readers_app.components.UsernameInput
 import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.enums.Screens
+import com.example.readers_app.infrastructure.view_model.UserViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 
 @Composable
 fun RegisterScreen(navController: NavController) {
+    val userViewModel = hiltViewModel<UserViewModel>()
     val context = LocalContext.current
 
     val window = (context as Activity).window
@@ -71,32 +74,11 @@ fun RegisterScreen(navController: NavController) {
 
     fun register() {
         if (valid) {
-            error.value = ""
-            loading.value = true
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.value, password.value)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
+            userViewModel.createUserWithEmailAndPassword(
+                email.value, password.value, username.value,
+                navController, context, loading, error
+            )
 
-                        val user = it.result.user
-
-                        Firebase.firestore.collection("users").document(user!!.uid).set(
-                            mapOf(
-                                "username" to username.value, "email" to email.value,
-                                "userId" to user.uid, "avatar" to AppStrings.AVATAR_URL
-                            )
-                        )
-                        // send email verification
-                        user.sendEmailVerification()
-
-                        error.value = ""
-                        loading.value = false
-                        navController.navigate(Screens.Login.name)
-                        Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
-                    } else {
-                        loading.value = false
-                        error.value = it.exception?.message.toString()
-                    }
-                }
         } else {
             if (email.value.isEmpty()) {
                 emailError.value = "Email can not be empty"
@@ -170,10 +152,10 @@ fun RegisterScreen(navController: NavController) {
                 }
 
                 Spacer(modifier = Modifier.height(80.dp))
-                if(!loading.value)
-                CustomBTN("Register") {
-                    register()
-                }
+                if (loading.value)
+                    CustomBTN("Register") {
+                        register()
+                    }
                 Spacer(modifier = Modifier.height(10.dp))
                 RichTextNav("Already own an account? ", "Login") {
                     navController.navigate(Screens.Login.name)

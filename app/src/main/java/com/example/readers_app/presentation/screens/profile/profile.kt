@@ -12,18 +12,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.readers_app.core.enums.Screens
-import com.example.readers_app.presentation.screens.profile.widgets.ConfirmLogout
+import com.example.readers_app.infrastructure.view_model.UserViewModel
+import com.example.readers_app.presentation.screens.profile.widgets.ConfirmDialog
 import com.example.readers_app.presentation.screens.profile.widgets.ProfileImageSection
 import com.example.readers_app.presentation.screens.profile.widgets.ProfileLink
 import com.example.readers_app.presentation.screens.profile.widgets.TopTextSection
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ProfileScreen(navController: NavController) {
     val showLogoutDialog = remember { mutableStateOf(false) }
+    val showDeleteAccountDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val userViewModel = hiltViewModel<UserViewModel>()
+
 
     Column(
         modifier = Modifier
@@ -48,7 +51,7 @@ fun ProfileScreen(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(15.dp))
         ProfileLink("Delete Account") {
-
+            showDeleteAccountDialog.value = true
         }
         Spacer(modifier = Modifier.height(15.dp))
         ProfileLink("Logout", hasDivider = false) {
@@ -56,16 +59,22 @@ fun ProfileScreen(navController: NavController) {
         }
 
         if (showLogoutDialog.value) {
-            ConfirmLogout(
-                showLogoutDialog
+            ConfirmDialog(
+                showLogoutDialog,
+                "Logout",
+                "Are you sure you want to logout?",
             ) {
-                FirebaseAuth.getInstance().signOut().run {
-                    navController.navigate(Screens.Entry.name) {
-                        popUpTo(0)
-                    }
-                    Toast.makeText(context, "Logout Successful", Toast.LENGTH_SHORT).show()
+                userViewModel.logout(navController, context)
+            }
+        }
 
-                }
+        if (showDeleteAccountDialog.value) {
+            ConfirmDialog(
+                showDeleteAccountDialog,
+                "Delete Account",
+                "Are you sure you want to delete account?",
+            ) {
+                userViewModel.deleteAccount(navController, context)
             }
         }
     }
