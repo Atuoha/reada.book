@@ -10,6 +10,7 @@ import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.ReadaUser
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -207,6 +208,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     }
 
     fun updatePassword(
+        oldPassword: String,
         password: String,
         navController: NavController,
         context: Context,
@@ -215,19 +217,34 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     ) {
         loading.value = true
         error.value = ""
-        firebaseAuth.currentUser?.updatePassword(password)?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                error.value = ""
-                loading.value = false
-                navController.popBackStack()
-                Toast.makeText(context, "Password Updated", Toast.LENGTH_SHORT).show()
-            } else {
-                loading.value = false
-                error.value = task.exception?.localizedMessage.orEmpty()
-                Toast.makeText(context, "Password Update Failed", Toast.LENGTH_SHORT).show()
+        val user = firebaseAuth.currentUser
+        val credential = EmailAuthProvider.getCredential(user?.email!!, oldPassword)
 
+        user.reauthenticate(credential).addOnCompleteListener { authenticate ->
+
+            if (authenticate.isSuccessful) {
+                firebaseAuth.currentUser?.updatePassword(password)?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        error.value = ""
+                        loading.value = false
+                        navController.popBackStack()
+                        Toast.makeText(context, "Password Updated", Toast.LENGTH_SHORT).show()
+                    } else {
+                        loading.value = false
+                        error.value = task.exception?.localizedMessage.orEmpty()
+                        Toast.makeText(context, "Password Update Failed", Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+            }else{
+                loading.value = false
+                error.value = authenticate.exception?.localizedMessage.orEmpty()
+                Toast.makeText(context, "Password Update Failed, Invalid Old Password", Toast.LENGTH_SHORT).show()
             }
         }
+
+
+
     }
 
 

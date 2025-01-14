@@ -78,6 +78,7 @@ fun EditPasswordScreen(navController: NavController) {
     fun editPassword() {
         if (valid) {
             userViewModel.updatePassword(
+                oldPassword.value,
                 password.value,
                 navController,
                 context,
