@@ -1,5 +1,6 @@
 package com.example.readers_app.di
 
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -15,4 +16,9 @@ object AppBundle {
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+
+    @Provides
+    @Singleton
+    fun providesFirebase(): Firebase = Firebase
 }

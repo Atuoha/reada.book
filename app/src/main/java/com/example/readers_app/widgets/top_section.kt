@@ -27,10 +27,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.readers_app.R
+import com.example.readers_app.infrastructure.view_model.UserViewModel
 
 @Composable
 fun TopSection() {
+    val userViewModel = hiltViewModel<UserViewModel>()
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth(),
@@ -47,7 +50,7 @@ fun TopSection() {
             )
             Spacer(modifier = Modifier.width(10.dp))
             Column {
-                Text(text = "Hi, Fatima", style = MaterialTheme.typography.titleMedium)
+                Text(text = "Hi, ${userViewModel.getUser()?.username}", style = MaterialTheme.typography.titleMedium)
                 Text(
                     text = "Good morning", style = TextStyle(
                         color = Color.LightGray,

@@ -20,11 +20,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) : ViewModel() {
+class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firebase: Firebase) : ViewModel() {
 
     fun logout(navController: NavController, context: Context) {
         try {
-            FirebaseAuth.getInstance().signOut().run {
+           firebaseAuth.signOut().run {
                 navController.navigate(Screens.Entry.name) {
                     popUpTo(0)
                 }
@@ -59,7 +59,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
         loading.value = true
 
         try {
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val user = task.result?.user
@@ -102,7 +102,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
         loading.value = true
 
         try {
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+            firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val user = task.result?.user
@@ -112,7 +112,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
                                 ReadaUser(user.uid, username, email, AppStrings.AVATAR_URL)
 
                             // Save user details to Firestore
-                            Firebase.firestore.collection("users").document(user.uid).set(
+                            firebase.firestore.collection("users").document(user.uid).set(
                                 readaUser.toMap()
                             ).addOnCompleteListener { firestoreTask ->
                                 if (firestoreTask.isSuccessful) {
@@ -158,7 +158,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
         error.value = ""
 
         try {
-            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+            firebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         error.value = ""
@@ -242,15 +242,23 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
                 Toast.makeText(context, "Password Update Failed, Invalid Old Password", Toast.LENGTH_SHORT).show()
             }
         }
-
-
-
     }
 
 
-    fun getCurrentUser(): FirebaseUser? {
-        return firebaseAuth.currentUser
+    fun getUser(): ReadaUser? {
+        val userId = firebaseAuth.currentUser?.uid
+        var user: ReadaUser? = null
+        if (userId != null) {
+            firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
+                if (it.exists()) {
+                    user = it.toObject(ReadaUser::class.java)
+                }
+            }
+        }
+        return user
     }
+
+
 
     fun updateProfile(
         username: String, email: String, image: String,
@@ -268,7 +276,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
                 var downloadUrl: String
 
                 // fetch user data from firestore
-                Firebase.firestore.collection("users").document(firebaseAuth.currentUser!!.uid)
+                firebase.firestore.collection("users").document(firebaseAuth.currentUser!!.uid)
                     .get().addOnSuccessListener {
                         if (it.exists()) {
                             val user = it.toObject(ReadaUser::class.java)
@@ -278,7 +286,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
                         }
 
                         val storageRef =
-                            Firebase.storage.reference.child("users/${firebaseAuth.currentUser!!.uid}/profile.jpg")
+                            firebase.storage.reference.child("users/${firebaseAuth.currentUser!!.uid}/profile.jpg")
 
                         // upload image to firebase storage
                         val uploadTask = if (image.isNotEmpty()) {
@@ -293,7 +301,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
                                     downloadUrl = uri.toString()
 
                                     // update user data in firestore
-                                    Firebase.firestore.collection("users")
+                                    firebase.firestore.collection("users")
                                         .document(firebaseAuth.currentUser!!.uid)
                                         .update(
                                             mapOf(

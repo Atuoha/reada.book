@@ -54,7 +54,7 @@ fun BookMarkedScreen(navController: NavController) {
             items(books.count()) { index ->
                 val book = books[index]
                 SingleBook(book = book){
-                    navController.navigate("details")
+                    navController.navigate("${Screens.Details.name}/${book.id}")
                 }
             }
         }
