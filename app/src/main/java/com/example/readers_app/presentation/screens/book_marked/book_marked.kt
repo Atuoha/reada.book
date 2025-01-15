@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.readers_app.components.SingleBook
+import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.books
 
 @SuppressLint("DiscouragedApi")

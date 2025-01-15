@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +35,8 @@ import com.example.readers_app.infrastructure.view_model.UserViewModel
 @Composable
 fun TopSection() {
     val userViewModel = hiltViewModel<UserViewModel>()
+    val user = userViewModel.user.value
+
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth(),
@@ -50,7 +53,17 @@ fun TopSection() {
             )
             Spacer(modifier = Modifier.width(10.dp))
             Column {
-                Text(text = "Hi, ${userViewModel.getUser()?.username}", style = MaterialTheme.typography.titleMedium)
+                if (user != null) {
+                    Text(
+                        text = "Hi, ${user.username}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                } else {
+                    Text(
+                        text = "Loading...",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
                 Text(
                     text = "Good morning", style = TextStyle(
                         color = Color.LightGray,

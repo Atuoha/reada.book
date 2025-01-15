@@ -61,7 +61,7 @@ fun SplashScreen(navController: NavController) {
                 popUpTo(Screens.Splash.name) { inclusive = true }
             }
         }else{
-            navController.navigate(Screens.Login.name) {
+            navController.navigate(Screens.Entry.name) {
                 popUpTo(Screens.Splash.name) { inclusive = true }
             }
         }

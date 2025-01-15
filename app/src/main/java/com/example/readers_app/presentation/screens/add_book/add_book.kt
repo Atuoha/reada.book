@@ -37,6 +37,10 @@ fun AddBookScreen(navController: NavController) {
         mutableStateOf("")
     }
 
+    fun search(){
+
+    }
+
     return Scaffold(
         topBar = {
             TopAppBar(

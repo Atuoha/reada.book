@@ -1,8 +1,11 @@
 package com.example.readers_app.infrastructure.view_model
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -12,23 +15,48 @@ import com.example.readers_app.domain.models.ReadaUser
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import androidx.compose.runtime.State
 
 @HiltViewModel
 class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firebase: Firebase) : ViewModel() {
 
+    private val _user = mutableStateOf<ReadaUser?>(null)
+    val user: State<ReadaUser?> = _user
+
+    init {
+        fetchUser()
+    }
+
+    private fun fetchUser() {
+        val userId = firebaseAuth.currentUser?.uid
+        if (userId != null) {
+            firebase.firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        _user.value = document.toObject(ReadaUser::class.java)
+                        Log.d("USER", "User fetched: ${_user.value?.username}")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("USER", "Failed to fetch user", exception)
+                }
+        }
+    }
+
+
+
     fun logout(navController: NavController, context: Context) {
         try {
            firebaseAuth.signOut().run {
+               Toast.makeText(context, "Logout Successful", Toast.LENGTH_SHORT).show()
                 navController.navigate(Screens.Entry.name) {
                     popUpTo(0)
                 }
-                Toast.makeText(context, "Logout Successful", Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
             Toast.makeText(
@@ -53,7 +81,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
         navController: NavController,
         context: Context,
         loading: MutableState<Boolean>,
-        error: MutableState<String>
+        error: MutableState<String>,
     ) {
         error.value = ""
         loading.value = true
@@ -245,19 +273,6 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
     }
 
 
-    fun getUser(): ReadaUser? {
-        val userId = firebaseAuth.currentUser?.uid
-        var user: ReadaUser? = null
-        if (userId != null) {
-            firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
-                if (it.exists()) {
-                    user = it.toObject(ReadaUser::class.java)
-                }
-            }
-        }
-        return user
-    }
-
 
 
     fun updateProfile(
@@ -281,7 +296,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                         if (it.exists()) {
                             val user = it.toObject(ReadaUser::class.java)
                             if (user != null) {
-                                downloadUrl = user.avatarUrl
+                                downloadUrl = user.avatar.toString()
                             }
                         }
 
