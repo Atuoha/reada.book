@@ -1,8 +1,11 @@
 package com.example.readers_app.core.constants
 
-class AppConstants{
+object AppConstants {
 
-    companion object{
-        const val API_KEY: String = ""
-    }
+    const val API_KEY: String = ""
+
+    const val BASE_URL: String = "https://www.googleapis.com/books/v1/"
 }
+
+
+// https://www.googleapis.com/books/v1/volumes?q=api

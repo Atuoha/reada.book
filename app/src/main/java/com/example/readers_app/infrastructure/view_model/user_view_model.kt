@@ -5,7 +5,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -17,12 +16,13 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.firestore
-import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.compose.runtime.State
+import com.google.firebase.storage.FirebaseStorage
+
 @HiltViewModel
-class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firebase: Firebase) : ViewModel() {
+class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firebase: Firebase, private val storage: FirebaseStorage) : ViewModel() {
 
     private val _user = mutableStateOf<ReadaUser?>(null)
     val user: State<ReadaUser?> = _user
@@ -300,7 +300,7 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                         }
 
                         val storageRef =
-                            firebase.storage.reference.child("users/${firebaseAuth.currentUser!!.uid}/profile.jpg")
+                            storage.reference.child("users/${firebaseAuth.currentUser!!.uid}/profile.jpg")
 
                         // upload image to firebase storage
                         val uploadTask = if (image.isNotEmpty()) {

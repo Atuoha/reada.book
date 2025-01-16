@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +28,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -73,7 +76,10 @@ fun AddBookScreen(navController: NavController) {
         }) { innerPadding ->
 
 
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Box(modifier = Modifier.padding(start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+            top = innerPadding.calculateTopPadding(),
+            end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+            bottom = 0.dp)) {
             Column(
                 modifier = Modifier.padding(
                     top = 10.dp,
