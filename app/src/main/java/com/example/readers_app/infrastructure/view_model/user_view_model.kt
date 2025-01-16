@@ -21,7 +21,6 @@ import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.compose.runtime.State
-
 @HiltViewModel
 class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firebase: Firebase) : ViewModel() {
 

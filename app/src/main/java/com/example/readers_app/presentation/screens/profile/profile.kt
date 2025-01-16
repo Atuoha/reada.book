@@ -1,6 +1,5 @@
 package com.example.readers_app.presentation.screens.profile
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +26,7 @@ fun ProfileScreen(navController: NavController) {
     val showDeleteAccountDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val userViewModel = hiltViewModel<UserViewModel>()
-
+    val user = userViewModel.user.value
 
     Column(
         modifier = Modifier
@@ -37,7 +36,9 @@ fun ProfileScreen(navController: NavController) {
         Spacer(Modifier.height(10.dp))
         TopTextSection()
         Spacer(modifier = Modifier.height(20.dp))
-        ProfileImageSection()
+        if (user != null) {
+            ProfileImageSection(user = user)
+        }
         Spacer(modifier = Modifier.height(20.dp))
         ProfileLink("Edit Profile") {
             navController.navigate(Screens.EditProfile.name)

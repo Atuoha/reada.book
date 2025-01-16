@@ -1,11 +1,13 @@
 package com.example.readers_app.presentation.screens.add_book
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -29,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.readers_app.domain.models.books
 import com.example.readers_app.presentation.screens.add_book.widgets.BookReadAdd
-import com.example.readers_app.presentation.screens.update_book.widgets.TextInputField
+import com.example.readers_app.presentation.screens.add_book.widgets.SearchInputField
 
 @Composable
 fun AddBookScreen(navController: NavController) {
@@ -37,8 +39,10 @@ fun AddBookScreen(navController: NavController) {
         mutableStateOf("")
     }
 
-    fun search(){
-
+    fun search() {
+        if (search.value.isNotEmpty()) {
+            Log.d("SEARCH", "search: ${search.value}")
+        }
     }
 
     return Scaffold(
@@ -77,7 +81,7 @@ fun AddBookScreen(navController: NavController) {
                     end = 18.dp
                 )
             ) {
-                TextInputField(
+                SearchInputField(
                     valueState = search,
                     isSingleLine = true,
                     labelId = "Enter book title",
@@ -85,14 +89,21 @@ fun AddBookScreen(navController: NavController) {
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Search,
                     icon = Icons.Default.Search,
-                    placeholder = "Search book"
-                )
+                    placeholder = "Search book",
+                    onAction = KeyboardActions(
+                        onSearch = {
+                            search()
+                        }
+                    ),
+                ) {
+                    search()
+                }
                 Spacer(modifier = Modifier.height(15.dp))
                 LazyColumn {
                     items(books.count()) { index ->
                         val book = books[index]
 
-                        BookReadAdd(index,book)
+                        BookReadAdd(index, book)
                     }
                 }
             }

@@ -1,6 +1,5 @@
 package com.example.readers_app.widgets
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,22 +17,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.readers_app.R
+import androidx.navigation.NavController
+import coil3.compose.AsyncImage
+import com.example.readers_app.core.enums.Screens
+import com.example.readers_app.core.utils.getGreeting
 import com.example.readers_app.infrastructure.view_model.UserViewModel
 
 @Composable
-fun TopSection() {
+fun TopSection(navController: NavController) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val user = userViewModel.user.value
 
@@ -47,10 +47,15 @@ fun TopSection() {
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = "Profile", modifier = Modifier.size(40.dp).clip(shape = CircleShape)
-            )
+            if (user != null) {
+                AsyncImage(
+                    model = user.avatar, contentDescription = "Profile Image",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                )
+            }
+
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 if (user != null) {
@@ -65,7 +70,7 @@ fun TopSection() {
                     )
                 }
                 Text(
-                    text = "Good morning", style = TextStyle(
+                    text = getGreeting(), style = TextStyle(
                         color = Color.LightGray,
                         fontSize = 13.sp, fontFamily = FontFamily.Serif
                     )
@@ -83,7 +88,8 @@ fun TopSection() {
                 ), contentAlignment = Alignment.Center
         ) {
             Icon(imageVector = Icons.Default.Search,
-                contentDescription = "Search", modifier = Modifier.clickable { })
+                contentDescription = "Search",
+                modifier = Modifier.clickable { navController.navigate(Screens.AddBook.name) })
         }
 
     }

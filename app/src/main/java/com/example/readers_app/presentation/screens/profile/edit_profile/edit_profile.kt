@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +50,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -58,8 +58,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
-import com.example.readers_app.R
 import com.example.readers_app.components.CustomBTN
 import com.example.readers_app.components.EmailInput
 import com.example.readers_app.components.TopText
@@ -73,6 +73,7 @@ import com.example.readers_app.ui.theme.primary
 @Composable
 fun EditProfileScreen(navController: NavController) {
     val userViewModel = hiltViewModel<UserViewModel>()
+    val user = userViewModel.user.value
     val context = LocalContext.current
     val showImageSelectionDialog = remember { mutableStateOf(false) }
 
@@ -101,6 +102,7 @@ fun EditProfileScreen(navController: NavController) {
         window.statusBarColor = Color(0xFFFD9D48).toArgb()
     }
 
+    val imageURL = remember{ mutableStateOf("") }
     val username = rememberSaveable { mutableStateOf("") }
     val email = rememberSaveable { mutableStateOf("") }
     val emailError = rememberSaveable { mutableStateOf("") }
@@ -110,6 +112,16 @@ fun EditProfileScreen(navController: NavController) {
     }
     val loading = remember { mutableStateOf(false) }
     val error = remember { mutableStateOf("") }
+
+
+    LaunchedEffect(user) {
+      if(user != null){
+          email.value = user.email.toString()
+          username.value = user.username.toString()
+          imageURL.value = user.avatar.toString()
+      }
+
+    }
 
     fun editProfile() {
         if (valid) {
@@ -217,13 +229,11 @@ fun EditProfileScreen(navController: NavController) {
                     }
 
                     else -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "Icon",
+                        AsyncImage(model = imageURL.value, contentDescription = "Profile Image",
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clip(CircleShape)
-                        )
+                            )
                     }
                 }
 

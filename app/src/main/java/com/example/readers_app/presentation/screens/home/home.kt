@@ -38,7 +38,7 @@ fun HomeScreen(navController: NavController) {
             .padding(vertical = 20.dp)
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            TopSection()
+            TopSection(navController)
             Spacer(modifier = Modifier.height(10.dp))
             GetStarted()
             Spacer(modifier = Modifier.height(10.dp))
