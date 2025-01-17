@@ -1,6 +1,5 @@
 package com.example.readers_app.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,18 +23,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readers_app.domain.models.Book
+import coil3.compose.AsyncImage
+import com.example.readers_app.core.app_strings.AppStrings
+import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.ui.theme.primary
 
 @Composable
-fun SingleBook(book: Book,onClick: () -> Unit) {
+fun SingleBook(book: Item, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .padding(start = 7.dp, top = 7.dp)
@@ -48,16 +48,16 @@ fun SingleBook(book: Book,onClick: () -> Unit) {
                 .fillMaxSize()
                 .padding(10.dp),
         ) {
-            Image(
-                painter = painterResource(book.image),
-                contentDescription = "Book",
+            AsyncImage(
+                model = book.volumeInfo.imageLinks?.thumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER, contentDescription = "Book",
                 modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)),
                 contentScale = ContentScale.FillWidth
             )
+
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    text = book.title,
+                    text = book.volumeInfo?.title?: "",
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
@@ -68,7 +68,7 @@ fun SingleBook(book: Book,onClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = book.author,
+                    text = book.volumeInfo?.authors?.get(0) ?: "Unknown",
                     style = TextStyle(
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Light,

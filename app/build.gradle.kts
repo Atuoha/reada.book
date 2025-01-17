@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,6 +91,7 @@ dependencies {
 
     //Retrofit
     implementation(libs.retrofit)
+
     //GSON converter
     implementation(libs.converter.gson)
 

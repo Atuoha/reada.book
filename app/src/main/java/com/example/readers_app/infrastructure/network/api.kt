@@ -8,6 +8,6 @@ import javax.inject.Singleton
 @Singleton
 interface BookApi {
 
-    @GET("volumes/{q}")
+    @GET("volumes")
     suspend fun getBooks(@Query("q") query: String): BookData
 }

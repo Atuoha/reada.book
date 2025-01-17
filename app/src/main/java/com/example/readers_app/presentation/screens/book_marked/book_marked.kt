@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -20,15 +21,23 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.readers_app.components.SingleBook
 import com.example.readers_app.core.enums.Screens
-import com.example.readers_app.domain.models.books
+import com.example.readers_app.infrastructure.view_model.BookViewModel
 
 @SuppressLint("DiscouragedApi")
 @Composable
 fun BookMarkedScreen(navController: NavController) {
     val context = LocalContext.current
+
+    val bookViewModel = hiltViewModel<BookViewModel>()
+
+    LaunchedEffect(Unit) {
+        bookViewModel.getBooks("Fiction")
+    }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -52,10 +61,12 @@ fun BookMarkedScreen(navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(0.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(books.count()) { index ->
-                val book = books[index]
-                SingleBook(book = book){
-                    navController.navigate("${Screens.Details.name}/${book.id}")
+            bookViewModel.books.value.data?.count()?.let {
+                items(it) { index ->
+                    val book =  bookViewModel.books.value.data!![index]
+                    SingleBook(book = book){
+                        navController.navigate("${Screens.Details.name}/${book.id}")
+                    }
                 }
             }
         }

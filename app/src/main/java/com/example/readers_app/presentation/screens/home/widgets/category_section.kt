@@ -22,7 +22,8 @@ import com.example.readers_app.ui.theme.primary
 @Composable
 fun CategorySection(
     categories: List<String>,
-    currentCategoryIndex: MutableIntState
+    currentCategoryIndex: MutableIntState,
+    categorySelection: (Int) -> Unit
 ) {
     LazyRow(modifier = Modifier.padding(start = 16.dp)) {
         items(categories.size) { i ->
@@ -33,7 +34,7 @@ fun CategorySection(
                 Box(
                     modifier = Modifier
                         .clickable {
-                            currentCategoryIndex.intValue = i
+                           categorySelection(i)
                         }
                         .background(color = bgColor, shape = RoundedCornerShape(5.dp))
                         .padding(10.dp),
