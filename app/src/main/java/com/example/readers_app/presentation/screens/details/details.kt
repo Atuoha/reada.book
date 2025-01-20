@@ -1,7 +1,12 @@
 package com.example.readers_app.presentation.screens.details
 
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,13 +27,19 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -37,23 +48,59 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.readers_app.R
+import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.enums.Screens
-import com.example.readers_app.domain.models.Book
-import com.example.readers_app.domain.models.books
+import com.example.readers_app.domain.models.book_data.Item
+import com.example.readers_app.infrastructure.view_model.BookViewModel
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
 import com.example.readers_app.ui.theme.primary
 
 
 @Composable
-fun DetailsScreen(navController: NavController, id: String) {
-    val book: Book = books.find { it.id == id } ?: return
+fun DetailsScreen(navController: NavController, id: String, bookViewModel: BookViewModel = hiltViewModel()) {
+    val context = LocalContext.current
+    val book = remember { mutableStateOf<Item?>(null) }
+    val error = remember { mutableStateOf(false) }
+    val isLoading = remember {
+        mutableStateOf(true)
+    }
+    LaunchedEffect(Unit) {
+        isLoading.value = true
+        error.value = false
+        bookViewModel.getBookById(id)
+    }
+
+    LaunchedEffect(bookViewModel.book.value) {
+        when {
+            bookViewModel.book.value.loading == true -> {
+                Log.d("Loading", "BOOK IS LOADING...")
+                isLoading.value = true
+            }
+
+            bookViewModel.book.value.error != null -> {
+                Log.d("Error", "BOOK HAS ERROR")
+
+                isLoading.value = false
+                error.value = true
+            }
+
+            bookViewModel.book.value.data != null -> {
+                Log.d("Data", "BOOK IS LOADING...")
+                book.value = bookViewModel.book.value.data
+                isLoading.value = false
+                error.value = false
+            }
+        }
+    }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate("${Screens.UpdateBook.name}/${book.id}")
+                    navController.navigate("${Screens.UpdateBook.name}/${id}")
                 },
                 backgroundColor = primary,
                 shape = RoundedCornerShape(10.dp)
@@ -102,15 +149,53 @@ fun DetailsScreen(navController: NavController, id: String) {
                     .fillMaxWidth()
             ) {
 
-                BookCoverImage(book.image)
+                when {
+                    isLoading.value -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column {
+                                CircularProgressIndicator()
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = "Loading...",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                        }
+                    }
+
+                    error.value -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column {
+                                Image(
+                                    painter = painterResource(id = R.drawable.opps),
+                                    contentDescription = "Connection Error"
+                                )
+                                Text(
+                                    text = "An error occurred: ${bookViewModel.books.value.error?.message}",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                        }
+                    }
+
+                    else -> {
+
+
+                BookCoverImage(book.value?.volumeInfo?.imageLinks?.thumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = book.title,
+                    text = book.value?.volumeInfo?.title?:"",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = book.author,
+                    text = book.value?.volumeInfo?.authors?.get(0) ?: "",
                     style = TextStyle(
                         color = Color.LightGray,
                         fontSize = 15.sp,
@@ -174,7 +259,7 @@ fun DetailsScreen(navController: NavController, id: String) {
                             fontFamily = FontFamily.Serif
                         )
                     ) {
-                        append("${book.pageCount} pages")
+                        append("${book.value?.volumeInfo?.pageCount} pages")
                     }
                 })
                 Text(text = buildAnnotatedString {
@@ -192,8 +277,11 @@ fun DetailsScreen(navController: NavController, id: String) {
                             fontFamily = FontFamily.Serif
                         )
                     ) {
-                        append(book.previewLink)
+                        append(book.value?.volumeInfo?.previewLink ?: "")
                     }
+                },modifier = Modifier.clickable {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(book.value?.volumeInfo?.previewLink ?: ""))
+                    context.startActivity(intent)
                 })
                 Spacer(modifier = Modifier.height(30.dp))
                 Text(
@@ -203,7 +291,7 @@ fun DetailsScreen(navController: NavController, id: String) {
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(book.description, style = MaterialTheme.typography.bodyMedium)
+                Text(book.value?.volumeInfo?.description ?: "", style = MaterialTheme.typography.bodyMedium)
 
                 Spacer(modifier = Modifier.height(15.dp))
 
@@ -226,6 +314,8 @@ fun DetailsScreen(navController: NavController, id: String) {
             }
         }
 
+    }
+        }
     }
 }
 

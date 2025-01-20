@@ -7,27 +7,51 @@ import javax.inject.Inject
 
 class BookRepository @Inject constructor(private val bookApi: BookApi) {
 
-    private val dataOrException = DataOrException<List<Item>, Boolean, Exception>()
+    private val booksListDataOrException = DataOrException<List<Item>, Boolean, Exception>()
+    private val bookDataOrException = DataOrException<Item, Boolean, Exception>()
+
 
     suspend fun getBooks(query: String): DataOrException<List<Item>, Boolean, Exception> {
-        dataOrException.data = null
-        dataOrException.error = null
-        dataOrException.loading = true
+        booksListDataOrException.data = null
+        booksListDataOrException.error = null
+        booksListDataOrException.loading = true
 
         try {
-           val data = bookApi.getBooks(query).items
+            val data = bookApi.getBooks(query).items
             if (data.isNotEmpty()) {
-                dataOrException.data = data
+                booksListDataOrException.data = data
             } else {
-                dataOrException.error = Exception("No books found")
+                booksListDataOrException.error = Exception("No books found")
             }
         } catch (e: Exception) {
-            dataOrException.error = e
+            booksListDataOrException.error = e
 
         } finally {
-            dataOrException.loading = false
+            booksListDataOrException.loading = false
         }
 
-        return dataOrException
+        return booksListDataOrException
+    }
+
+
+    suspend fun getBooksById(bookId: String): DataOrException<Item, Boolean, Exception> {
+        bookDataOrException.data = null
+        bookDataOrException.error = null
+        bookDataOrException.loading = true
+
+        try {
+            val data = bookApi.getBookById(bookId)
+            if (data != null) {
+                bookDataOrException.data = data
+            } else {
+                bookDataOrException.error = Exception("Book not found")
+            }
+        } catch (e: Exception) {
+            bookDataOrException.error = e
+        } finally {
+            bookDataOrException.loading = false
+        }
+
+        return bookDataOrException
     }
 }

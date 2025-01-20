@@ -21,6 +21,12 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
         )
     val books: State<DataOrException<List<Item>, Boolean, Exception>> = _books
 
+    // single book
+    private val _book: MutableState<DataOrException<Item, Boolean, Exception>> =
+        mutableStateOf(
+            DataOrException()
+        )
+    val book: State<DataOrException<Item, Boolean, Exception>> = _book
 
     fun getBooks(query: String) {
         viewModelScope.launch {
@@ -33,9 +39,11 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
                         "BOOKS FOUND",
                         "getBooks: ${_books.value.data?.first()?.volumeInfo?.title}"
                     )
+
                     Log.d("BOOK SIZE", "${books.value.data?.count()}")
                     books.value.data?.forEach {
                         Log.d("BOOK", "Book Title: ${it.volumeInfo.title}")
+                        Log.d("BOOK IMAGE", "Book Image: ${it.volumeInfo.imageLinks?.thumbnail}")
                     }
                 } else {
                     _books.value =
@@ -48,6 +56,34 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
             }
         }
     }
+
+
+    fun getBookById(bookId: String){
+        viewModelScope.launch {
+            _book.value = DataOrException(loading = true)
+
+            try {
+                val data = bookRepository.getBooksById(bookId)
+                if (data.data != null) {
+                    _book.value = DataOrException(data = data.data, loading = false)
+                    Log.d(
+                        "BOOK FOUND",
+                        "getBookById: ${_book.value.data?.volumeInfo?.title}"
+                    )
+
+
+                } else {
+                    _book.value =
+                        DataOrException(error = Exception("No book found"), loading = false)
+                    Log.d("NO BOOK", "getBookById:NO BOOK FOUND")
+                }
+            } catch (e: Exception) {
+                _book.value = DataOrException(error = e)
+                Log.d("BOOK ERROR", "getBookById: ${e.message}")
+            }
+        }
+    }
+
 
 
 }

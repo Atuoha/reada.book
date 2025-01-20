@@ -1,5 +1,7 @@
 package com.example.readers_app.presentation.screens.update_book
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +21,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.Save
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.readers_app.components.CustomBTN
+import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.domain.models.Book
 import com.example.readers_app.domain.models.books
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
@@ -105,7 +107,7 @@ fun UpdateBookScreen(navController: NavController, id: String = "3"){
                     .fillMaxWidth()
             ) {
 
-                BookCoverImage(book.image)
+                BookCoverImage(AppStrings.BOOK_IMAGE_PLACEHOLDER)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = book.title,
@@ -187,6 +189,8 @@ fun UpdateBookScreen(navController: NavController, id: String = "3"){
                         append("${book.pageCount} pages")
                     }
                 })
+
+
                 Text(text = buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
