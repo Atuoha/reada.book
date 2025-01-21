@@ -23,8 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
-import coil3.compose.AsyncImage
 import com.example.readers_app.R
 import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.domain.models.book_data.Item
@@ -52,13 +49,6 @@ fun SingleBook(book: Item, onClick: () -> Unit) {
                 .fillMaxSize()
                 .padding(10.dp),
         ) {
-
-//            AsyncImage(
-//                model = book.volumeInfo.imageLinks?.thumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER, contentDescription = "Book",
-//                  placeholder = painterResource(id = R.drawable.placeholder),
-//                  error = painterResource(id = R.drawable.placeholder),
-//                modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)).width(80.dp),
-//            )
 
             Image(
                 painter = rememberImagePainter(

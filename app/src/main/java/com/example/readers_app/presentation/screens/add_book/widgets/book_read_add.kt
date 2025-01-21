@@ -32,12 +32,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
+import com.example.readers_app.R
+import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.domain.models.Book
+import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.ui.theme.primary
 
 
 @Composable
-fun BookReadAdd(index: Int, book: Book) {
+fun BookReadAdd(index: Int, book: Item, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -54,15 +58,22 @@ fun BookReadAdd(index: Int, book: Book) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Image(
-                    painter = painterResource(book.image),
-                    contentDescription = "Book",
-                    modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)),
-                    contentScale = ContentScale.FillWidth
+                    painter = rememberImagePainter(
+                        data = book.volumeInfo.imageLinks?.thumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
+                        builder = {
+                            crossfade(true)
+                            error(R.drawable.placeholder)
+                            placeholder(R.drawable.placeholder)
+                        }
+                    ),
+                    contentDescription = "Book Cover",
+                    modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)).width(80.dp),
                 )
+
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = book.title,
+                        text = book.volumeInfo?.title?: "",
                         style = TextStyle(
                             fontFamily = FontFamily.Serif,
                             fontWeight = FontWeight.SemiBold,
@@ -73,7 +84,7 @@ fun BookReadAdd(index: Int, book: Book) {
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = book.author,
+                        text = book.volumeInfo?.authors?.get(0) ?: "Unknown",
                         style = TextStyle(
                             fontFamily = FontFamily.Serif,
                             fontWeight = FontWeight.Light,
@@ -89,7 +100,7 @@ fun BookReadAdd(index: Int, book: Book) {
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = "Star",
-                                tint = primary,
+                                tint = Color.LightGray,
                                 modifier = Modifier.size(15.dp)
                             )
                             Spacer(modifier = Modifier.width(5.dp))
@@ -97,7 +108,7 @@ fun BookReadAdd(index: Int, book: Book) {
 
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
-                            text = "5.0",
+                            text = "0.0",
                             style = TextStyle(
                                 fontFamily = FontFamily.Serif,
                                 fontWeight = FontWeight.Light,
@@ -113,7 +124,7 @@ fun BookReadAdd(index: Int, book: Book) {
                     Icon(
                         imageVector = Icons.Default.Bookmark,
                         contentDescription = "",
-                        tint = primary,
+                        tint = Color.LightGray,
                         modifier = Modifier.clickable { }
                     )
 
