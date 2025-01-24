@@ -1,5 +1,6 @@
 package com.example.readers_app.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.readers_app.R
 import com.example.readers_app.core.app_strings.AppStrings
+import com.example.readers_app.core.utils.appendJpg
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.ui.theme.primary
 
@@ -52,7 +54,7 @@ fun SingleBook(book: Item, onClick: () -> Unit) {
 
             Image(
                 painter = rememberImagePainter(
-                    data = book.volumeInfo.imageLinks?.thumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
+                    data = book.volumeInfo.imageLinks?.smallThumbnail?.let { appendJpg(it) } ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
                     builder = {
                         crossfade(true)
                         error(R.drawable.placeholder)
@@ -62,7 +64,7 @@ fun SingleBook(book: Item, onClick: () -> Unit) {
                 contentDescription = "Book Cover",
                 modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)).width(80.dp),
             )
-
+            Log.d("BOOK IMAGE", book.volumeInfo.imageLinks?.smallThumbnail?.let { appendJpg(it) } ?: AppStrings.BOOK_IMAGE_PLACEHOLDER)
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(

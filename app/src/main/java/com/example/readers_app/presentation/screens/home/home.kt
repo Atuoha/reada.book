@@ -127,7 +127,7 @@ fun HomeScreen(navController: NavController, bookViewModel: BookViewModel = hilt
                             contentDescription = "Connection Error"
                         )
                         Text(
-                            text = "An error occurred: ${bookViewModel.books.value.error?.message}",
+                            text = "${bookViewModel.books.value.error?.message}",
                             style = androidx.compose.material3.MaterialTheme.typography.titleMedium
                         )
                     }

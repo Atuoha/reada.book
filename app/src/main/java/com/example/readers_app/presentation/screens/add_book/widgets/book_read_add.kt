@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.readers_app.R
 import com.example.readers_app.core.app_strings.AppStrings
+import com.example.readers_app.core.utils.appendJpg
 import com.example.readers_app.domain.models.Book
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.ui.theme.primary
@@ -59,7 +60,7 @@ fun BookReadAdd(index: Int, book: Item, onClick: () -> Unit) {
             ) {
                 Image(
                     painter = rememberImagePainter(
-                        data = book.volumeInfo.imageLinks?.thumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
+                        data = book.volumeInfo.imageLinks?.thumbnail?.let { appendJpg(it) }  ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
                         builder = {
                             crossfade(true)
                             error(R.drawable.placeholder)

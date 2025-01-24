@@ -195,7 +195,7 @@ fun DetailsScreen(
 
 
                         BookCoverImage(
-                            book.value?.volumeInfo?.imageLinks?.thumbnail
+                            book.value?.volumeInfo?.imageLinks?.smallThumbnail
                                 ?: AppStrings.BOOK_IMAGE_PLACEHOLDER
                         )
                         Spacer(modifier = Modifier.height(20.dp))
