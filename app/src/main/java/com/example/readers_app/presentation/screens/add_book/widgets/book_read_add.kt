@@ -25,8 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -36,9 +34,7 @@ import coil.compose.rememberImagePainter
 import com.example.readers_app.R
 import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.utils.appendJpg
-import com.example.readers_app.domain.models.Book
 import com.example.readers_app.domain.models.book_data.Item
-import com.example.readers_app.ui.theme.primary
 
 
 @Composable

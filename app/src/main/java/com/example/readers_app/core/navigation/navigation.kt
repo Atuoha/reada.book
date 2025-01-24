@@ -10,6 +10,8 @@ import androidx.navigation.navArgument
 import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.domain.models.Book
 import com.example.readers_app.presentation.screens.add_book.AddBookScreen
+import com.example.readers_app.presentation.screens.add_details.AddDetailsScreen
+import com.example.readers_app.presentation.screens.added_books.AddedBooksScreen
 import com.example.readers_app.presentation.screens.currently_reading.CurrentlyReadingScreen
 import com.example.readers_app.presentation.screens.details.DetailsScreen
 import com.example.readers_app.presentation.screens.entry.EntryScreen
@@ -80,8 +82,22 @@ fun ReadaNavigation() {
             DetailsScreen(navController = navController, id = bookId)
         }
 
+        composable(
+            route = Screens.AddDetails.name + "/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val bookId = backStackEntry.arguments?.getString("id") ?: ""
+            AddDetailsScreen(navController = navController, id = bookId)
+        }
+
         composable(route = Screens.CurrentlyReading.name){
             CurrentlyReadingScreen(navController = navController)
+        }
+
+        composable(route = Screens.AddedBooks.name){
+            AddedBooksScreen(navController = navController)
         }
 
         composable(route = Screens.EditPassword.name){

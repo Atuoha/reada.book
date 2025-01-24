@@ -86,7 +86,9 @@ fun HomeScreen(navController: NavController, bookViewModel: BookViewModel = hilt
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             TopSection(navController)
             Spacer(modifier = Modifier.height(10.dp))
-            GetStarted()
+            GetStarted(){
+                navController.navigate(Screens.AddBook.name)
+            }
             Spacer(modifier = Modifier.height(10.dp))
             SectionWithAll(title = "Currently Reading") {
                 navController.navigate(Screens.CurrentlyReading.name)
@@ -147,7 +149,7 @@ fun HomeScreen(navController: NavController, bookViewModel: BookViewModel = hilt
                             Log.d("FROM BOOK", "Book Title: ${book.volumeInfo.title}")
                             SingleBook(book = book) {
                                 book.id.let { id ->
-                                    navController.navigate("${Screens.Details.name}/$id")
+                                    navController.navigate("${Screens.AddDetails.name}/$id")
                                 }
                             }
                         }

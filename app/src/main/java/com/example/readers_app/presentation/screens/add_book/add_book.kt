@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,6 +22,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -118,14 +120,42 @@ fun AddBookScreen(navController: NavController, bookViewModel: BookViewModel = h
                             letterSpacing = 1.sp
                         )
                     )
-                })
+                },
+                actions = {
+                    // View Added books Button
+                    IconButton(onClick = {
+                        navController.navigate(Screens.AddedBooks.name)
+                    }) {
+                        Text(
+                            text = "View Added Books",
+                            style = TextStyle(
+                                color = Color.Black,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = FontFamily.Serif,
+                                letterSpacing = 1.sp
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Icon(
+                            imageVector = Icons.Default.Book,
+                            contentDescription = "Book"
+                        )
+                    }
+
+                }
+            )
         }) { innerPadding ->
 
 
-        Box(modifier = Modifier.padding(start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-            top = innerPadding.calculateTopPadding(),
-            end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-            bottom = 0.dp)) {
+        Box(
+            modifier = Modifier.padding(
+                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                top = innerPadding.calculateTopPadding(),
+                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                bottom = 0.dp
+            )
+        ) {
             Column(
                 modifier = Modifier.padding(
                     top = 10.dp,
@@ -168,6 +198,7 @@ fun AddBookScreen(navController: NavController, bookViewModel: BookViewModel = h
                             }
                         }
                     }
+
                     error.value -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -176,16 +207,19 @@ fun AddBookScreen(navController: NavController, bookViewModel: BookViewModel = h
                             Column {
                                 Image(
                                     painter = painterResource(id = R.drawable.opps),
-                                    contentDescription = "Connection Error",modifier = Modifier.fillMaxWidth()
+                                    contentDescription = "Connection Error",
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                                 Text(
                                     text = "${bookViewModel.books.value.error?.message}",
                                     textAlign = TextAlign.Center,
-                                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium, modifier = Modifier.fillMaxWidth()
+                                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }
                     }
+
                     else -> {
 
                         LazyColumn {
@@ -195,7 +229,7 @@ fun AddBookScreen(navController: NavController, bookViewModel: BookViewModel = h
                                     Log.d("FROM BOOK", "Book Title: ${book.volumeInfo.title}")
                                     BookReadAdd(book = book, index = index) {
                                         book.id.let { id ->
-                                            navController.navigate("${Screens.Details.name}/$id")
+                                            navController.navigate("${Screens.AddDetails.name}/$id")
                                         }
                                     }
                                 }
@@ -204,8 +238,6 @@ fun AddBookScreen(navController: NavController, bookViewModel: BookViewModel = h
 
                     }
                 }
-
-
 
 
             }

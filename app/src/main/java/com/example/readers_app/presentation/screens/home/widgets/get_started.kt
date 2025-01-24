@@ -35,7 +35,7 @@ import com.example.readers_app.ui.theme.primary
 
 
 @Composable
-fun GetStarted() {
+fun GetStarted(onGetStartedClicked: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,6 +59,7 @@ fun GetStarted() {
                     Spacer(modifier = Modifier.height(10.dp))
                     Button(
                         onClick = {
+                            onGetStartedClicked()
                         }, colors = ButtonDefaults.buttonColors(containerColor = primary),
                         border = BorderStroke(1.dp, primary),
                         modifier = Modifier
