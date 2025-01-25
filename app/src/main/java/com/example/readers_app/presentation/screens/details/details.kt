@@ -56,11 +56,13 @@ import com.example.readers_app.R
 import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.enums.Screens
 import com.example.readers_app.core.utils.cleanDescription
+import com.example.readers_app.core.utils.setZoomLevel
+import com.example.readers_app.core.utils.toHttps
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.infrastructure.view_model.BookViewModel
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
 import com.example.readers_app.ui.theme.primary
-
+import com.example.readers_app.core.utils.toHttps
 
 @Composable
 fun DetailsScreen(
@@ -195,7 +197,7 @@ fun DetailsScreen(
 
 
                         BookCoverImage(
-                            book.value?.volumeInfo?.imageLinks?.smallThumbnail
+                            book.value?.volumeInfo?.imageLinks?.thumbnail?.toHttps()?.setZoomLevel(6)
                                 ?: AppStrings.BOOK_IMAGE_PLACEHOLDER
                         )
                         Spacer(modifier = Modifier.height(20.dp))
@@ -223,7 +225,7 @@ fun DetailsScreen(
                                     Icon(
                                         imageVector = Icons.Default.Star,
                                         contentDescription = "Star",
-                                        tint = primary,
+                                        tint = Color.LightGray,
                                         modifier = Modifier.size(15.dp)
                                     )
                                     Spacer(modifier = Modifier.width(2.dp))
@@ -244,11 +246,14 @@ fun DetailsScreen(
                                 Spacer(modifier = Modifier.height(10.dp))
 
                             }
-                            Icon(imageVector = Icons.Default.Bookmark,
+                            Icon(
+                                imageVector = Icons.Default.Bookmark,
                                 contentDescription = "",
-                                tint = primary, modifier = Modifier
+                                tint = Color.LightGray,
+                                modifier = Modifier
                                     .size(22.dp)
-                                    .clickable { })
+                                    .clickable { },
+                            )
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                         HorizontalDivider(thickness = 0.3.dp)
@@ -279,7 +284,7 @@ fun DetailsScreen(
                                     fontFamily = FontFamily.Serif
                                 )
                             ) {
-                                append("Book Preview Link: ")
+                                append("Book Preview Link (click to view): ")
                             }
                             withStyle(
                                 style = SpanStyle(
@@ -305,7 +310,7 @@ fun DetailsScreen(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            cleanDescription(book.value?.volumeInfo?.description ?: "") ,
+                            cleanDescription(book.value?.volumeInfo?.description ?: ""),
                             style = MaterialTheme.typography.bodyMedium
                         )
 
@@ -322,7 +327,7 @@ fun DetailsScreen(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "A thought-provoking journey into the depths of the human experience. This book reminds us of the importance of reflection, growth, and embracing the unknown. Every page offers something new to ponder and leaves an impression that lingers long after the final chapter.",
+                                text = "No thoughts from you yet!",
                                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.LightGray)
                             )
                         }

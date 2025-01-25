@@ -136,12 +136,8 @@ fun AddBookScreen(navController: NavController, bookViewModel: BookViewModel = h
                                 letterSpacing = 1.sp
                             )
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Icon(
-                            imageVector = Icons.Default.Book,
-                            contentDescription = "Book"
-                        )
                     }
+                    Spacer(modifier = Modifier.width(18.dp))
 
                 }
             )

@@ -106,7 +106,7 @@ fun CurrentlyReadingScreen(navController: NavController) {
                 bookViewModel.books.value.data?.count()?.let {
                     items(it) { index ->
                         val book =  bookViewModel.books.value.data!![index]
-                        SingleBook(book = book){
+                        SingleBook(book = book,rating = book.volumeInfo.averageRating.toInt()){
                             navController.navigate("${Screens.Details.name}/${book.id}")
                         }
                     }

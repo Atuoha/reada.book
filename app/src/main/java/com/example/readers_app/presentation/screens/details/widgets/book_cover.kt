@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,11 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.example.readers_app.R
-import com.example.readers_app.core.app_strings.AppStrings
 
 @Composable
 fun BookCoverImage(bookImg: String) {
@@ -36,15 +33,15 @@ fun BookCoverImage(bookImg: String) {
                     data = bookImg,
                     builder = {
                         crossfade(true)
-                        error(R.drawable.placeholder)
-                        placeholder(R.drawable.placeholder)
+                        error(R.drawable.error_img_big)
+                        placeholder(R.drawable.placeholder_big)
                     }
                 ),
                 contentDescription = "Book Img",
                 modifier = Modifier
                     .clip(shape = RoundedCornerShape(5.dp))
                     .padding(10.dp),
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.FillBounds
             )
         }
     }

@@ -34,6 +34,8 @@ import coil.compose.rememberImagePainter
 import com.example.readers_app.R
 import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.utils.appendJpg
+import com.example.readers_app.core.utils.setZoomLevel
+import com.example.readers_app.core.utils.toHttps
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.ui.theme.primary
 
@@ -54,23 +56,23 @@ fun SingleAddedBook(book: Item, onClick: () -> Unit) {
 
             Image(
                 painter = rememberImagePainter(
-                    data = book.volumeInfo.imageLinks?.smallThumbnail?.let { appendJpg(it) } ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
+                    data = book.volumeInfo.imageLinks?.thumbnail?.toHttps()?.setZoomLevel(10)  ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
                     builder = {
                         crossfade(true)
-                        error(R.drawable.placeholder)
+                        error(R.drawable.error_img_big)
                         placeholder(R.drawable.placeholder)
                     }
                 ),
                 contentDescription = "Book Cover",
                 modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)).width(80.dp),
             )
-            Log.d("BOOK IMAGE", book.volumeInfo.imageLinks?.smallThumbnail?.let { appendJpg(it) } ?: AppStrings.BOOK_IMAGE_PLACEHOLDER)
+            Log.d("BOOK IMAGE", book.volumeInfo.imageLinks?.smallThumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER)
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
                     text = book.volumeInfo?.title?: "",
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     style = TextStyle(
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.SemiBold,

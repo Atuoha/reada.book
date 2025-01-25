@@ -34,11 +34,13 @@ import coil.compose.rememberImagePainter
 import com.example.readers_app.R
 import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.utils.appendJpg
+import com.example.readers_app.core.utils.setZoomLevel
+import com.example.readers_app.core.utils.toHttps
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.ui.theme.primary
 
 @Composable
-fun SingleBook(book: Item, onClick: () -> Unit) {
+fun SingleBook(book: Item,rating:Int, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .padding(start = 7.dp, top = 7.dp)
@@ -54,36 +56,38 @@ fun SingleBook(book: Item, onClick: () -> Unit) {
 
             Image(
                 painter = rememberImagePainter(
-                    data = book.volumeInfo.imageLinks?.smallThumbnail?.let { appendJpg(it) } ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
+                    data = book.volumeInfo.imageLinks?.thumbnail?.toHttps()?.setZoomLevel(10) ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
                     builder = {
                         crossfade(true)
-                        error(R.drawable.placeholder)
+                        error(R.drawable.error_img_big)
                         placeholder(R.drawable.placeholder)
                     }
                 ),
                 contentDescription = "Book Cover",
                 modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)).width(80.dp),
             )
-            Log.d("BOOK IMAGE", book.volumeInfo.imageLinks?.smallThumbnail?.let { appendJpg(it) } ?: AppStrings.BOOK_IMAGE_PLACEHOLDER)
+            Log.d("BOOK IMAGE", book.volumeInfo.imageLinks?.smallThumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER)
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
                     text = book.volumeInfo?.title?: "",
-                    maxLines = 3,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
+                        fontSize = 15.sp,
                     ),
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = book.volumeInfo?.authors?.get(0) ?: "Unknown",
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Light,
-                        fontSize = 11.sp,
+                        fontSize = 13.sp,
                         color = Color.LightGray,
                     ),
                 )
@@ -93,7 +97,7 @@ fun SingleBook(book: Item, onClick: () -> Unit) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Star",
-                            tint = primary,
+                            tint = if (j <= rating) primary else Color.LightGray,
                             modifier = Modifier.size(10.dp)
                         )
                         Spacer(modifier = Modifier.width(2.dp))
@@ -102,11 +106,11 @@ fun SingleBook(book: Item, onClick: () -> Unit) {
 
                 }
                 Text(
-                    text = "5.0",
+                    text = "$rating.0",
                     style = TextStyle(
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Light,
-                        fontSize = 10.sp,
+                        fontSize = 13.sp,
                         color = Color.LightGray,
                     ),
                     modifier = Modifier.padding(start = 1.dp)
@@ -114,7 +118,7 @@ fun SingleBook(book: Item, onClick: () -> Unit) {
                 Icon(imageVector = Icons.Default.Bookmark,
                     contentDescription = "",
                     tint = primary, modifier = Modifier
-                        .size(15.dp)
+                        .size(18.dp)
                         .clickable { })
             }
         }

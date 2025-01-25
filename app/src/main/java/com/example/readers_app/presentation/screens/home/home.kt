@@ -147,7 +147,7 @@ fun HomeScreen(navController: NavController, bookViewModel: BookViewModel = hilt
                         items(books.size) { index ->
                             val book = books[index]
                             Log.d("FROM BOOK", "Book Title: ${book.volumeInfo.title}")
-                            SingleBook(book = book) {
+                            SingleBook(book = book,rating = book.volumeInfo.averageRating.toInt()) {
                                 book.id.let { id ->
                                     navController.navigate("${Screens.AddDetails.name}/$id")
                                 }
