@@ -61,6 +61,8 @@ fun SingleBookMark(book: BookMarkedBook, onClick: () -> Unit) {
                     thumbnail = book.thumbnail,
                     authors = book.authors,
                     rating = book.rating,
+                    thoughts = "",
+
                 )
 
                 Firebase.firestore.collection("book_marked").document(book.id).set(

@@ -36,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -80,7 +81,8 @@ fun DetailsScreen(
     val isLoading = remember {
         mutableStateOf(true)
     }
-
+    val rating = remember { mutableIntStateOf(0) }
+    val review = remember { mutableStateOf("") }
     val bookMarked = remember { mutableStateOf(false) }
 
     fun bookMark() {
@@ -94,6 +96,7 @@ fun DetailsScreen(
                     thumbnail = book.value?.volumeInfo?.imageLinks?.thumbnail,
                     authors = book.value?.volumeInfo?.authors?.get(0),
                     rating = book.value?.volumeInfo?.averageRating,
+                    thoughts = "",
                 )
 
 
@@ -123,6 +126,8 @@ fun DetailsScreen(
 
         Firebase.firestore.collection("book_marked").document(id).get().addOnSuccessListener {
             bookMarked.value = it.exists()
+            rating.intValue = it.get("rating").toString().toDouble().toInt()?:  0
+            review.value = it.get("thoughts").toString()
         }
     }
 
@@ -269,7 +274,7 @@ fun DetailsScreen(
                                     Icon(
                                         imageVector = Icons.Default.Star,
                                         contentDescription = "Star",
-                                        tint = Color.LightGray,
+                                        tint = if(j <= rating.intValue) primary else Color.LightGray,
                                         modifier = Modifier.size(15.dp)
                                     )
                                     Spacer(modifier = Modifier.width(2.dp))
@@ -278,7 +283,7 @@ fun DetailsScreen(
                                 Spacer(modifier = Modifier.width(10.dp))
 
                                 Text(
-                                    text = "5.0",
+                                    text = "${rating.intValue}.0",
                                     style = TextStyle(
                                         fontFamily = FontFamily.Serif,
                                         fontWeight = FontWeight.Light,
@@ -373,7 +378,7 @@ fun DetailsScreen(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "No thoughts from you yet!",
+                                text = review.value.ifEmpty { "No thoughts from you yet!" },
                                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.LightGray)
                             )
                         }

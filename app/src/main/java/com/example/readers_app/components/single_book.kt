@@ -62,6 +62,7 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
                     thumbnail = book.volumeInfo.imageLinks.thumbnail,
                     authors = book.volumeInfo.authors[0],
                     rating = book.volumeInfo.averageRating,
+                    thoughts = "",
                 )
 
 

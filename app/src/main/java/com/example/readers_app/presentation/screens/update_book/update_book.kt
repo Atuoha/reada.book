@@ -63,6 +63,7 @@ import com.example.readers_app.core.utils.cleanDescription
 import com.example.readers_app.core.utils.setZoomLevel
 import com.example.readers_app.core.utils.toHttps
 import com.example.readers_app.domain.models.BookMarkedBook
+import com.example.readers_app.domain.models.Currently_Reading
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.infrastructure.view_model.BookViewModel
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
@@ -84,6 +85,9 @@ fun UpdateBookScreen(
         mutableStateOf(true)
     }
     val bookMarked = remember { mutableStateOf(false) }
+    val starCount = remember { mutableIntStateOf(0) }
+    val review = remember { mutableStateOf("") }
+    val isReading = remember { mutableStateOf(false) }
 
     fun bookMark() {
         bookMarked.value = !bookMarked.value
@@ -95,6 +99,7 @@ fun UpdateBookScreen(
                     title = book.value?.volumeInfo?.title,
                     thumbnail = book.value?.volumeInfo?.imageLinks?.thumbnail,
                     authors = book.value?.volumeInfo?.authors?.get(0),
+                    thoughts = "",
                     rating = book.value?.volumeInfo?.averageRating,
                 )
 
@@ -118,14 +123,45 @@ fun UpdateBookScreen(
 
     }
 
+    fun saveAndRatingReview() {
+        try {
+            Firebase.firestore.collection("book_marked").document(id).update(
+                "rating", starCount.intValue,
+                "thoughts", review.value
+            ).addOnSuccessListener {
+                Toast.makeText(context, "Review Saved", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d("Error", e.message.toString())
+        }
+
+
+    }
+
     LaunchedEffect(Unit) {
         isLoading.value = true
         error.value = false
         bookViewModel.getBookById(id)
 
-        Firebase.firestore.collection("book_marked").document(id).get().addOnSuccessListener {
-            bookMarked.value = it.exists()
+        try{
+            Firebase.firestore.collection("book_marked").document(id).get().addOnSuccessListener {
+                bookMarked.value = it.exists()
+                starCount.intValue = it.get("rating").toString().toDouble().toInt()
+                review.value = it.get("thoughts").toString()
+            }
+
+            Firebase.firestore.collection("currently_reading").document(id).get().addOnSuccessListener {
+                if (it.exists()){
+                    isReading.value = it.get("isReading").toString().toBoolean()
+                }
+            }
+        }catch (e: Exception){
+            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d("Error", e.message.toString())
         }
+
+
     }
 
     LaunchedEffect(bookViewModel.book.value) {
@@ -151,13 +187,39 @@ fun UpdateBookScreen(
         }
     }
 
-    val starCount = remember { mutableIntStateOf(0) }
-    val review = remember { mutableStateOf("") }
+    fun startReading() {
+
+        val currentlyReading = Currently_Reading(id, book.value?.volumeInfo?.title, book.value?.volumeInfo?.imageLinks?.thumbnail, System.currentTimeMillis(), 0, true)
+
+        try{
+            Firebase.firestore.collection("currently_reading")
+                .document(id).set(currentlyReading.toJson())
+                .addOnSuccessListener {
+                    Toast.makeText(context, "Started Reading", Toast.LENGTH_SHORT).show()
+                }
+        }catch (e: Exception){
+            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d("Error", e.message.toString())
+        }
+    }
+
+
+    fun finishReading(){
+        try{
+            Firebase.firestore.collection("currently_reading").document(id).update("isReading", false, "end_date", System.currentTimeMillis())
+                .addOnSuccessListener {
+                    Toast.makeText(context, "Finished Reading", Toast.LENGTH_SHORT).show()
+                }
+        }catch (e: Exception){
+            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d("Error", e.message.toString())
+        }
+    }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-
+                saveAndRatingReview()
             }, backgroundColor = primary, shape = RoundedCornerShape(10.dp)) {
                 androidx.compose.material.Icon(
                     imageVector = Icons.Default.Save,
@@ -302,7 +364,8 @@ fun UpdateBookScreen(
                             }
                             Icon(imageVector = Icons.Default.Bookmark,
                                 contentDescription = "",
-                                tint = if (bookMarked.value) primary else Color.LightGray, modifier = Modifier
+                                tint = if (bookMarked.value) primary else Color.LightGray,
+                                modifier = Modifier
                                     .size(22.dp)
                                     .clickable {
                                         bookMark()
@@ -382,13 +445,19 @@ fun UpdateBookScreen(
                         ) {
                             Box(modifier = Modifier.fillMaxWidth(0.40f)) {
 
-                                CustomBTN("Start Reading") {
+                                CustomBTN("Start Reading", containerColor = if(isReading.value) Color.LightGray else primary)  {
+                                    if (!isReading.value){
+                                        startReading()
+                                    }
                                 }
                             }
                             Spacer(modifier = Modifier.width(10.dp))
 
                             Box(modifier = Modifier.fillMaxWidth(0.70f)) {
-                                CustomBTN("Stop Reading", containerColor = Color.LightGray) {
+                                CustomBTN("Stop Reading", containerColor = if(isReading.value) primary else Color.LightGray) {
+                                    if (isReading.value) {
+                                        finishReading()
+                                    }
                                 }
                             }
                         }

@@ -94,6 +94,7 @@ fun AddDetailsScreen(
                     thumbnail = book.value?.volumeInfo?.imageLinks?.thumbnail,
                     authors = book.value?.volumeInfo?.authors?.get(0),
                     rating = book.value?.volumeInfo?.averageRating,
+                    thoughts = "",
                 )
 
 
