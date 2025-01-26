@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readers_app.domain.data.DataOrException
 import com.example.readers_app.domain.models.BookMarkedBook
+import com.example.readers_app.domain.models.CurrentlyReading
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.infrastructure.repository.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +37,12 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
         )
     val bookMarkedBooks: State<DataOrException<List<BookMarkedBook>, Boolean, Exception>> = _bookmarkedBooks
 
+    private val _currentlyReadingBooks: MutableState<DataOrException<List<CurrentlyReading>, Boolean, Exception>> =
+        mutableStateOf(
+            DataOrException()
+        )
+
+    val currentlyReadingBooks: State<DataOrException<List<CurrentlyReading>, Boolean, Exception>> = _currentlyReadingBooks
 
     fun getBooks(query: String) {
         viewModelScope.launch {
@@ -80,6 +87,28 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
         }
     }
 
+    fun getCurrentlyReadingBooks() {
+        viewModelScope.launch {
+            _currentlyReadingBooks.value = DataOrException(loading = true)
+            try {
+                val data = bookRepository.getCurrentlyReadingBooks()
+                if (data.data?.isNotEmpty() == true) {
+                    _currentlyReadingBooks.value = DataOrException(data = data.data, loading = false)
+                    currentlyReadingBooks.value.data?.forEach {
+                        Log.d("BOOK", "Book Title: ${it.title}")
+                        Log.d("BOOK IMAGE", "Book Image: ${it.thumbnail}")
+                    }
+                } else {
+                    _currentlyReadingBooks.value =
+                        DataOrException(error = Exception("No books found"), loading = false)
+                    Log.d("NO BOOKS", "currentlyReadingBooks: NO BOOKS FOUND")
+                }
+            } catch (e: Exception) {
+                _currentlyReadingBooks.value = DataOrException(error = e)
+                Log.d("BOOKS ERROR", "currentlyReadingBooks: ${e.message}")
+            }
+        }
+    }
 
     fun getBookById(bookId: String){
         viewModelScope.launch {

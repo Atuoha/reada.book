@@ -63,7 +63,7 @@ import com.example.readers_app.core.utils.cleanDescription
 import com.example.readers_app.core.utils.setZoomLevel
 import com.example.readers_app.core.utils.toHttps
 import com.example.readers_app.domain.models.BookMarkedBook
-import com.example.readers_app.domain.models.Currently_Reading
+import com.example.readers_app.domain.models.CurrentlyReading
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.infrastructure.view_model.BookViewModel
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
@@ -71,6 +71,7 @@ import com.example.readers_app.presentation.screens.update_book.widgets.TextInpu
 import com.example.readers_app.ui.theme.primary
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import java.util.Date
 
 @Composable
 fun UpdateBookScreen(
@@ -188,8 +189,7 @@ fun UpdateBookScreen(
     }
 
     fun startReading() {
-
-        val currentlyReading = Currently_Reading(id, book.value?.volumeInfo?.title, book.value?.volumeInfo?.imageLinks?.thumbnail, System.currentTimeMillis(), 0, true)
+        val currentlyReading = CurrentlyReading(id, book.value?.volumeInfo?.title,book.value?.volumeInfo?.authors?.get(0), book.value?.volumeInfo?.imageLinks?.thumbnail, Date(), null, true)
 
         try{
             Firebase.firestore.collection("currently_reading")
@@ -206,7 +206,7 @@ fun UpdateBookScreen(
 
     fun finishReading(){
         try{
-            Firebase.firestore.collection("currently_reading").document(id).update("isReading", false, "end_date", System.currentTimeMillis())
+            Firebase.firestore.collection("currently_reading").document(id).update("isReading", false, "end_date", Date())
                 .addOnSuccessListener {
                     Toast.makeText(context, "Finished Reading", Toast.LENGTH_SHORT).show()
                 }

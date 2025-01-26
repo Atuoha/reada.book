@@ -123,21 +123,21 @@ fun AddBookScreen(navController: NavController, bookViewModel: BookViewModel = h
                 },
                 actions = {
                     // View Added books Button
-                    IconButton(onClick = {
-                        navController.navigate(Screens.AddedBooks.name)
-                    }) {
-                        Text(
-                            text = "View Added Books",
-                            style = TextStyle(
-                                color = Color.Black,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                fontFamily = FontFamily.Serif,
-                                letterSpacing = 1.sp
-                            )
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(18.dp))
+//                    IconButton(onClick = {
+//                        navController.navigate(Screens.AddedBooks.name)
+//                    }) {
+//                        Text(
+//                            text = "View Added Books",
+//                            style = TextStyle(
+//                                color = Color.Black,
+//                                fontSize = 14.sp,
+//                                fontWeight = FontWeight.Medium,
+//                                fontFamily = FontFamily.Serif,
+//                                letterSpacing = 1.sp
+//                            )
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.width(18.dp))
 
                 }
             )

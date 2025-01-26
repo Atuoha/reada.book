@@ -1,6 +1,5 @@
 package com.example.readers_app.presentation.screens.added_books.widgets
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,13 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.readers_app.R
 import com.example.readers_app.core.app_strings.AppStrings
-import com.example.readers_app.core.utils.appendJpg
 import com.example.readers_app.core.utils.setZoomLevel
 import com.example.readers_app.core.utils.toHttps
 import com.example.readers_app.domain.models.book_data.Item
@@ -56,7 +53,7 @@ fun SingleAddedBook(book: Item, onClick: () -> Unit) {
 
             Image(
                 painter = rememberImagePainter(
-                    data = book.volumeInfo.imageLinks?.thumbnail?.toHttps()?.setZoomLevel(10)  ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
+                    data = book.volumeInfo.imageLinks.thumbnail.toHttps().setZoomLevel(10)  ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
                     builder = {
                         crossfade(true)
                         error(R.drawable.error_img_big)
@@ -66,11 +63,10 @@ fun SingleAddedBook(book: Item, onClick: () -> Unit) {
                 contentDescription = "Book Cover",
                 modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)).width(80.dp),
             )
-            Log.d("BOOK IMAGE", book.volumeInfo.imageLinks?.smallThumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER)
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    text = book.volumeInfo?.title?: "",
+                    text = book.volumeInfo.title?: "",
                     maxLines = 2,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     style = TextStyle(
@@ -81,7 +77,7 @@ fun SingleAddedBook(book: Item, onClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = book.volumeInfo?.authors?.get(0) ?: "Unknown",
+                    text = book.volumeInfo.authors?.get(0) ?: "Unknown",
                     style = TextStyle(
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Light,

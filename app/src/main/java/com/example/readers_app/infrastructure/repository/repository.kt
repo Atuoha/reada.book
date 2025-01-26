@@ -2,6 +2,7 @@ package com.example.readers_app.infrastructure.repository
 
 import com.example.readers_app.domain.data.DataOrException
 import com.example.readers_app.domain.models.BookMarkedBook
+import com.example.readers_app.domain.models.CurrentlyReading
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.infrastructure.network.BookApi
 import com.google.firebase.Firebase
@@ -17,6 +18,9 @@ class BookRepository @Inject constructor(private val bookApi: BookApi) {
     private val bookDataOrException = DataOrException<Item, Boolean, Exception>()
     private val bookMarkedBooksListDataOrException =
         DataOrException<List<BookMarkedBook>, Boolean, Exception>()
+
+    private val currentlyReadingBooksListDataOrException =
+        DataOrException<List<CurrentlyReading>, Boolean, Exception>()
 
     suspend fun getBooks(query: String): DataOrException<List<Item>, Boolean, Exception> {
         booksListDataOrException.data = null
@@ -70,6 +74,37 @@ class BookRepository @Inject constructor(private val bookApi: BookApi) {
             bookMarkedBooksListDataOrException.loading = false
         }
         return bookMarkedBooksListDataOrException
+    }
+
+    suspend fun getCurrentlyReadingBooks(): DataOrException<List<CurrentlyReading>, Boolean, Exception> {
+        currentlyReadingBooksListDataOrException.data = null
+        currentlyReadingBooksListDataOrException.error = null
+        currentlyReadingBooksListDataOrException.loading = true
+
+        try {
+            val currentlyReadingBooks = suspendCoroutine { continuation ->
+                Firebase.firestore.collection("currently_reading").get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        val books = it.result.documents.map { document ->
+                            document.toObject(CurrentlyReading::class.java)!!
+                        }
+                        continuation.resume(books)
+                    } else {
+                        continuation.resumeWithException(Exception("No Currently Reading Books Found"))
+                    }
+                }
+            }
+            if (currentlyReadingBooks.isNotEmpty()) {
+                currentlyReadingBooksListDataOrException.data = currentlyReadingBooks
+            } else {
+                currentlyReadingBooksListDataOrException.error = Exception("No Currently Reading Books Found")
+            }
+        } catch (e: Exception) {
+            currentlyReadingBooksListDataOrException.error = e
+        } finally {
+            currentlyReadingBooksListDataOrException.loading = false
+        }
+        return currentlyReadingBooksListDataOrException
     }
 
     suspend fun getBooksById(bookId: String): DataOrException<Item, Boolean, Exception> {

@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun StatBox() {
+fun StatBox(booksRead: Int, booksReading: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,7 +46,7 @@ fun StatBox() {
                     append("You've read: ")
                 }
                 withStyle(style = SpanStyle(color = Color.LightGray)) {
-                    append("120 Books")
+                    append("$booksRead Books")
                 }
             })
             Text(
@@ -56,7 +56,7 @@ fun StatBox() {
                         append("You are reading: ")
                     }
                     withStyle(style = SpanStyle(color = Color.LightGray)) {
-                        append("2 Books")
+                        append("$booksReading Books")
                     }
                 }
             )
