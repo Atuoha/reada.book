@@ -66,7 +66,6 @@ fun HomeScreen(navController: NavController, bookViewModel: BookViewModel = hilt
 
             bookViewModel.books.value.data != null -> {
                 Log.d("Data", "BOOK IS LOADING...")
-
                 isLoading.value = false
                 error.value = false
             }

@@ -3,6 +3,7 @@ package com.example.readers_app.presentation.screens.add_details
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -63,7 +63,9 @@ import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.infrastructure.view_model.BookViewModel
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
 import com.example.readers_app.ui.theme.primary
-import com.example.readers_app.core.utils.toHttps
+import com.example.readers_app.domain.models.BookMarkedBook
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 
 @Composable
@@ -83,12 +85,45 @@ fun AddDetailsScreen(
 
     fun bookMark() {
         bookMarked.value = !bookMarked.value
+
+        try {
+            if (bookMarked.value) {
+                val bookMarkBook = BookMarkedBook(
+                    id = id,
+                    title = book.value?.volumeInfo?.title,
+                    thumbnail = book.value?.volumeInfo?.imageLinks?.thumbnail,
+                    authors = book.value?.volumeInfo?.authors?.get(0),
+                    rating = book.value?.volumeInfo?.averageRating,
+                )
+
+
+                Firebase.firestore.collection("book_marked").document(id).set(
+                    bookMarkBook.toJson()
+                ).addOnSuccessListener {
+                    Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Firebase.firestore.collection("book_marked").document(id).delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
+        } catch (e: Exception) {
+            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d("Error", e.message.toString())
+        }
+
     }
 
     LaunchedEffect(Unit) {
         isLoading.value = true
         error.value = false
         bookViewModel.getBookById(id)
+
+        Firebase.firestore.collection("book_marked").document(id).get().addOnSuccessListener {
+            bookMarked.value = it.exists()
+        }
     }
 
     LaunchedEffect(bookViewModel.book.value) {
@@ -116,16 +151,16 @@ fun AddDetailsScreen(
 
     Scaffold(
         floatingActionButton = {
-            if (!isLoading.value) FloatingActionButton(
+            if (!isLoading.value && bookMarked.value) FloatingActionButton(
                 onClick = {
-                   // navController.navigate("${Screens.UpdateBook.name}/${id}")
+                    navController.navigate("${Screens.UpdateBook.name}/${id}")
                 },
                 backgroundColor = primary,
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = "Save",
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
                     tint = Color.White
                 )
             }
@@ -159,7 +194,8 @@ fun AddDetailsScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize().verticalScroll(rememberScrollState())
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
             Column(
                 modifier = Modifier
@@ -206,7 +242,8 @@ fun AddDetailsScreen(
 
 
                         BookCoverImage(
-                            book.value?.volumeInfo?.imageLinks?.thumbnail?.toHttps()?.setZoomLevel(6)
+                            book.value?.volumeInfo?.imageLinks?.thumbnail?.toHttps()
+                                ?.setZoomLevel(6)
                                 ?: AppStrings.BOOK_IMAGE_PLACEHOLDER
                         )
                         Spacer(modifier = Modifier.height(20.dp))
@@ -234,7 +271,7 @@ fun AddDetailsScreen(
                                     Icon(
                                         imageVector = Icons.Default.Star,
                                         contentDescription = "Star",
-                                        tint = if(j <= book.value?.volumeInfo?.averageRating?.toInt()!!) primary else Color.LightGray,
+                                        tint = if (j <= book.value?.volumeInfo?.averageRating?.toInt()!!) primary else Color.LightGray,
                                         modifier = Modifier.size(15.dp)
                                     )
                                     Spacer(modifier = Modifier.width(2.dp))
@@ -257,7 +294,8 @@ fun AddDetailsScreen(
                             }
                             Icon(imageVector = Icons.Default.Bookmark,
                                 contentDescription = "",
-                                tint = if(bookMarked.value) primary else Color.LightGray, modifier = Modifier
+                                tint = if (bookMarked.value) primary else Color.LightGray,
+                                modifier = Modifier
                                     .size(22.dp)
                                     .clickable {
                                         bookMark()
@@ -318,27 +356,10 @@ fun AddDetailsScreen(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            cleanDescription(book.value?.volumeInfo?.description ?: "") ,
+                            cleanDescription(book.value?.volumeInfo?.description ?: ""),
                             style = MaterialTheme.typography.bodyMedium
                         )
 
-                        Spacer(modifier = Modifier.height(15.dp))
-
-                        Row {
-                            Text(
-                                text = "“",
-                                style = TextStyle(
-                                    color = Color.LightGray,
-                                    fontSize = 45.sp,
-                                    fontFamily = FontFamily.Serif
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "No thoughts from you yet!",
-                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.LightGray)
-                            )
-                        }
                         Spacer(modifier = Modifier.height(20.dp))
                     }
                 }

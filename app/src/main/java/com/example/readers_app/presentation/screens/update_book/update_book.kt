@@ -1,6 +1,7 @@
 package com.example.readers_app.presentation.screens.update_book
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -60,11 +62,14 @@ import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.utils.cleanDescription
 import com.example.readers_app.core.utils.setZoomLevel
 import com.example.readers_app.core.utils.toHttps
+import com.example.readers_app.domain.models.BookMarkedBook
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.infrastructure.view_model.BookViewModel
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
 import com.example.readers_app.presentation.screens.update_book.widgets.TextInputField
 import com.example.readers_app.ui.theme.primary
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 @Composable
 fun UpdateBookScreen(
@@ -72,6 +77,7 @@ fun UpdateBookScreen(
     id: String,
     bookViewModel: BookViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val book = remember { mutableStateOf<Item?>(null) }
     val error = remember { mutableStateOf(false) }
     val isLoading = remember {
@@ -81,12 +87,45 @@ fun UpdateBookScreen(
 
     fun bookMark() {
         bookMarked.value = !bookMarked.value
+
+        try {
+            if (bookMarked.value) {
+                val bookMarkBook = BookMarkedBook(
+                    id = id,
+                    title = book.value?.volumeInfo?.title,
+                    thumbnail = book.value?.volumeInfo?.imageLinks?.thumbnail,
+                    authors = book.value?.volumeInfo?.authors?.get(0),
+                    rating = book.value?.volumeInfo?.averageRating,
+                )
+
+
+                Firebase.firestore.collection("book_marked").document(id).set(
+                    bookMarkBook.toJson()
+                ).addOnSuccessListener {
+                    Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Firebase.firestore.collection("book_marked").document(id).delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
+        } catch (e: Exception) {
+            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d("Error", e.message.toString())
+        }
+
     }
 
     LaunchedEffect(Unit) {
         isLoading.value = true
         error.value = false
         bookViewModel.getBookById(id)
+
+        Firebase.firestore.collection("book_marked").document(id).get().addOnSuccessListener {
+            bookMarked.value = it.exists()
+        }
     }
 
     LaunchedEffect(bookViewModel.book.value) {

@@ -1,4 +1,4 @@
-package com.example.readers_app.components
+package com.example.readers_app.presentation.screens.book_marked.widgets
 
 import android.util.Log
 import android.widget.Toast
@@ -41,13 +41,12 @@ import com.example.readers_app.core.app_strings.AppStrings
 import com.example.readers_app.core.utils.setZoomLevel
 import com.example.readers_app.core.utils.toHttps
 import com.example.readers_app.domain.models.BookMarkedBook
-import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.ui.theme.primary
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 @Composable
-fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
+fun SingleBookMark(book: BookMarkedBook, onClick: () -> Unit) {
     val context = LocalContext.current
     val bookMarked = remember { mutableStateOf(false) }
 
@@ -58,12 +57,11 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
             if (bookMarked.value) {
                 val bookMarkBook = BookMarkedBook(
                     id = book.id,
-                    title = book.volumeInfo.title,
-                    thumbnail = book.volumeInfo.imageLinks.thumbnail,
-                    authors = book.volumeInfo.authors[0],
-                    rating = book.volumeInfo.averageRating,
+                    title = book.title,
+                    thumbnail = book.thumbnail,
+                    authors = book.authors,
+                    rating = book.rating,
                 )
-
 
                 Firebase.firestore.collection("book_marked").document(book.id).set(
                     bookMarkBook.toJson()
@@ -108,7 +106,7 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
 
             Image(
                 painter = rememberImagePainter(
-                    data = book.volumeInfo.imageLinks.thumbnail.toHttps().setZoomLevel(10)
+                    data = book.thumbnail!!.toHttps().setZoomLevel(10)
                         ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
                     builder = {
                         crossfade(true)
@@ -121,14 +119,10 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
                     .clip(shape = RoundedCornerShape(5.dp))
                     .width(80.dp),
             )
-            Log.d(
-                "BOOK IMAGE",
-                book.volumeInfo.imageLinks.smallThumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER
-            )
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    text = book.volumeInfo.title ?: "",
+                    text = book.title ?: "",
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
@@ -139,7 +133,7 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = book.volumeInfo.authors[0] ?: "Unknown",
+                    text = book.authors ?: "Unknown",
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
@@ -155,7 +149,7 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Star",
-                            tint = if (j <= rating) primary else Color.LightGray,
+                            tint = if (j <= book.rating!!.toInt()) primary else Color.LightGray,
                             modifier = Modifier.size(10.dp)
                         )
                         Spacer(modifier = Modifier.width(2.dp))
@@ -164,7 +158,7 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
 
                 }
                 Text(
-                    text = "$rating.0",
+                    text = "${book.rating!!.toInt()}.0",
                     style = TextStyle(
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Light,

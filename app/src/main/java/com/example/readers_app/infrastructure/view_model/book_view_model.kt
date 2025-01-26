@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readers_app.domain.data.DataOrException
+import com.example.readers_app.domain.models.BookMarkedBook
 import com.example.readers_app.domain.models.book_data.Item
 import com.example.readers_app.infrastructure.repository.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,14 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
         )
     val book: State<DataOrException<Item, Boolean, Exception>> = _book
 
+
+    private val _bookmarkedBooks: MutableState<DataOrException<List<BookMarkedBook>, Boolean, Exception>> =
+        mutableStateOf(
+            DataOrException()
+        )
+    val bookMarkedBooks: State<DataOrException<List<BookMarkedBook>, Boolean, Exception>> = _bookmarkedBooks
+
+
     fun getBooks(query: String) {
         viewModelScope.launch {
             _books.value = DataOrException(loading = true)
@@ -35,24 +44,38 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
                 val data = bookRepository.getBooks(query)
                 if (data.data?.isNotEmpty() == true) {
                     _books.value = DataOrException(data = data.data, loading = false)
-                    Log.d(
-                        "BOOKS FOUND",
-                        "getBooks: ${_books.value.data?.first()?.volumeInfo?.title}"
-                    )
-
-                    Log.d("BOOK SIZE", "${books.value.data?.count()}")
-                    books.value.data?.forEach {
-                        Log.d("BOOK", "Book Title: ${it.volumeInfo.title}")
-                        Log.d("BOOK IMAGE", "Book Image: ${it.volumeInfo.imageLinks?.thumbnail}")
-                    }
                 } else {
                     _books.value =
                         DataOrException(error = Exception("No books found"), loading = false)
-                    Log.d("NO BOOKS", "getBooks:NO BOOKS FOUND")
                 }
             } catch (e: Exception) {
                 _books.value = DataOrException(error = e)
                 Log.d("BOOKS ERROR", "getBooks: ${e.message}")
+            }
+        }
+    }
+
+
+    fun getBookMarkedBooks() {
+        viewModelScope.launch {
+            _bookmarkedBooks.value = DataOrException(loading = true)
+            try {
+                val data = bookRepository.getBookMarkedBooks()
+                if (data.data?.isNotEmpty() == true) {
+                    _bookmarkedBooks.value = DataOrException(data = data.data, loading = false)
+
+                    bookMarkedBooks.value.data?.forEach {
+                        Log.d("BOOK", "Book Title: ${it.title}")
+                        Log.d("BOOK IMAGE", "Book Image: ${it.thumbnail}")
+                    }
+                } else {
+                    _bookmarkedBooks.value =
+                        DataOrException(error = Exception("No books found"), loading = false)
+                    Log.d("NO BOOKS", "bookMarkedBooks: NO BOOKS FOUND")
+                }
+            } catch (e: Exception) {
+                _bookmarkedBooks.value = DataOrException(error = e)
+                Log.d("BOOKS ERROR", "bookMarkedBooks: ${e.message}")
             }
         }
     }
@@ -70,8 +93,6 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
                         "BOOK FOUND",
                         "getBookById: ${_book.value.data?.volumeInfo?.title}"
                     )
-
-
                 } else {
                     _book.value =
                         DataOrException(error = Exception("No book found"), loading = false)

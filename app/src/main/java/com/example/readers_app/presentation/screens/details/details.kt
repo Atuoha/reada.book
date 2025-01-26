@@ -3,6 +3,7 @@ package com.example.readers_app.presentation.screens.details
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -63,6 +64,9 @@ import com.example.readers_app.infrastructure.view_model.BookViewModel
 import com.example.readers_app.presentation.screens.details.widgets.BookCoverImage
 import com.example.readers_app.ui.theme.primary
 import com.example.readers_app.core.utils.toHttps
+import com.example.readers_app.domain.models.BookMarkedBook
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 @Composable
 fun DetailsScreen(
@@ -76,10 +80,50 @@ fun DetailsScreen(
     val isLoading = remember {
         mutableStateOf(true)
     }
+
+    val bookMarked = remember { mutableStateOf(false) }
+
+    fun bookMark() {
+        bookMarked.value = !bookMarked.value
+
+        try {
+            if (bookMarked.value) {
+                val bookMarkBook = BookMarkedBook(
+                    id = id,
+                    title = book.value?.volumeInfo?.title,
+                    thumbnail = book.value?.volumeInfo?.imageLinks?.thumbnail,
+                    authors = book.value?.volumeInfo?.authors?.get(0),
+                    rating = book.value?.volumeInfo?.averageRating,
+                )
+
+
+                Firebase.firestore.collection("book_marked").document(id).set(
+                    bookMarkBook.toJson()
+                ).addOnSuccessListener {
+                    Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Firebase.firestore.collection("book_marked").document(id).delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
+        } catch (e: Exception) {
+            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d("Error", e.message.toString())
+        }
+
+    }
+
     LaunchedEffect(Unit) {
         isLoading.value = true
         error.value = false
         bookViewModel.getBookById(id)
+
+        Firebase.firestore.collection("book_marked").document(id).get().addOnSuccessListener {
+            bookMarked.value = it.exists()
+        }
     }
 
     LaunchedEffect(bookViewModel.book.value) {
@@ -107,7 +151,7 @@ fun DetailsScreen(
 
     Scaffold(
         floatingActionButton = {
-            if (!isLoading.value) FloatingActionButton(
+            if (!isLoading.value && bookMarked.value) FloatingActionButton(
                 onClick = {
                     navController.navigate("${Screens.UpdateBook.name}/${id}")
                 },
@@ -249,10 +293,12 @@ fun DetailsScreen(
                             Icon(
                                 imageVector = Icons.Default.Bookmark,
                                 contentDescription = "",
-                                tint = Color.LightGray,
+                                tint = if(bookMarked.value) primary else Color.LightGray,
                                 modifier = Modifier
                                     .size(22.dp)
-                                    .clickable { },
+                                    .clickable {
+                                        bookMark()
+                                    },
                             )
                         }
                         Spacer(modifier = Modifier.height(10.dp))
