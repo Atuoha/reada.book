@@ -47,15 +47,17 @@ import com.example.readers_app.domain.models.CurrentlyReading
 import com.example.readers_app.ui.theme.primary
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @Composable
 fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
     val context = LocalContext.current
-
     val bookMarked = remember { mutableStateOf(false) }
     val starCount = remember { mutableIntStateOf(0) }
-
+    val dateFormat = SimpleDateFormat("EEE, MMMM dd, yyyy", Locale.getDefault())
 
     fun bookMark() {
         bookMarked.value = !bookMarked.value
@@ -191,7 +193,15 @@ fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
                     )
 
                     Spacer(modifier = Modifier.height(15.dp))
-                    Text( if(book.isReading!!) "Started ${book.start_date}" else "Finished ${book.end_date}",style = TextStyle(color = Color.LightGray, fontFamily = FontFamily.Serif, fontSize = 13.sp))
+                    Text(
+                        if (book.isReading == true)
+                            "Started ${dateFormat.format(book.start_date!!)}"
+                        else
+                            "Finished ${dateFormat.format(book.end_date ?: Date())}",
+                        style = TextStyle(color = Color.LightGray, fontFamily = FontFamily.Serif, fontSize = 13.sp)
+                    )
+
+
                 }
             }
 
