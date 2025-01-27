@@ -133,7 +133,7 @@ fun BookReadAdd(index: Int, book: Item, onClick: () -> Unit) {
                     Spacer(modifier = Modifier.height(5.dp))
                     Row() {
                         Text(
-                            text = ("Publish Date: " + book.volumeInfo?.publishedDate) ?: "Unknown",
+                            text = ("Publish Date: " + book.volumeInfo.publishedDate) ?: "Unknown",
                             style = TextStyle(
                                 fontFamily = FontFamily.Serif,
                                 fontWeight = FontWeight.Light,

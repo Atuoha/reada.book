@@ -116,7 +116,7 @@ fun EditProfileScreen(navController: NavController) {
 
     LaunchedEffect(user) {
       if(user != null){
-          email.value = "tae@gmail.com" // user.email.toString()
+          email.value =  user.email.toString()
           username.value = user.username.toString()
           imageURL.value = user.avatar.toString()
       }

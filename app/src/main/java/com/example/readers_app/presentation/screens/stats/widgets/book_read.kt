@@ -105,7 +105,10 @@ fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
         Firebase.firestore.collection("book_marked").document(book.id!!).get()
             .addOnSuccessListener {
                 bookMarked.value = it.exists()
-                starCount.intValue = it.get("rating").toString().toDouble().toInt() ?: 0
+                if(it.get("rating") != null)
+                starCount.intValue = it.get("rating").toString().toDouble().toInt()
+                else
+                    starCount.intValue = 0
             }
     }
 
