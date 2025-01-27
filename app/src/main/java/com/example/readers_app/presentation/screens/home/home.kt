@@ -85,7 +85,7 @@ fun HomeScreen(navController: NavController, bookViewModel: BookViewModel = hilt
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             TopSection(navController)
             Spacer(modifier = Modifier.height(10.dp))
-            GetStarted(){
+            GetStarted{
                 navController.navigate(Screens.AddBook.name)
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -93,7 +93,9 @@ fun HomeScreen(navController: NavController, bookViewModel: BookViewModel = hilt
                 navController.navigate(Screens.CurrentlyReading.name)
             }
             Spacer(modifier = Modifier.height(5.dp))
-            CurrentlyReading()
+            CurrentlyReading{
+                navController.navigate("${Screens.Details.name}/${it}")
+            }
             Spacer(modifier = Modifier.height(10.dp))
         }
         CarouselComponent()

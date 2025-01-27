@@ -145,7 +145,7 @@ fun LoginScreen(navController: NavController) {
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 }
-                Spacer(modifier = Modifier.height(110.dp))
+                Spacer(modifier = Modifier.height(180.dp))
 
                 if (!loading.value)
                     CustomBTN("Login") {

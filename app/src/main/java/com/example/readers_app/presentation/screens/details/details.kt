@@ -2,6 +2,8 @@ package com.example.readers_app.presentation.screens.details
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -103,17 +105,23 @@ fun DetailsScreen(
                 Firebase.firestore.collection("book_marked").document(id).set(
                     bookMarkBook.toJson()
                 ).addOnSuccessListener {
-                    Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Firebase.firestore.collection("book_marked").document(id).delete()
                     .addOnSuccessListener {
-                        Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        }
                     }
             }
 
         } catch (e: Exception) {
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
             Log.d("Error", e.message.toString())
         }
 

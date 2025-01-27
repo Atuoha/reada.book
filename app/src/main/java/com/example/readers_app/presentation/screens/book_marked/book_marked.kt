@@ -31,8 +31,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.readers_app.R
 import com.example.readers_app.core.enums.Screens
+import com.example.readers_app.domain.models.BookMarkedBook
 import com.example.readers_app.infrastructure.view_model.BookViewModel
 import com.example.readers_app.presentation.screens.book_marked.widgets.SingleBookMark
+import okhttp3.internal.immutableListOf
 
 @SuppressLint("DiscouragedApi")
 @Composable
@@ -41,8 +43,13 @@ fun BookMarkedScreen(navController: NavController) {
     val isLoading = remember {
         mutableStateOf(true)
     }
+    val bookMarkedBooks = remember { mutableStateOf(listOf<BookMarkedBook>()) }
+
     val bookViewModel = hiltViewModel<BookViewModel>()
 
+    fun callFnc(id: String){
+        bookMarkedBooks.value = bookMarkedBooks.value.filter { it.id != id }
+    }
 
     LaunchedEffect(Unit) {
         isLoading.value = true
@@ -54,7 +61,7 @@ fun BookMarkedScreen(navController: NavController) {
         when {
             bookViewModel.bookMarkedBooks.value.loading == true -> {
                 Log.d("Loading", "BOOK IS LOADING...")
-                isLoading.value = true
+                    isLoading.value = true
             }
 
             bookViewModel.bookMarkedBooks.value.error != null -> {
@@ -66,6 +73,7 @@ fun BookMarkedScreen(navController: NavController) {
             bookViewModel.bookMarkedBooks.value.data != null -> {
                 Log.d("Data", "BOOK IS LOADING...")
                 isLoading.value = false
+                bookMarkedBooks.value = bookViewModel.bookMarkedBooks.value.data!!
                 error.value = false
             }
         }
@@ -114,7 +122,7 @@ fun BookMarkedScreen(navController: NavController) {
                             contentDescription = "Connection Error"
                         )
                         Text(
-                            text = "${bookViewModel.books.value.error?.message}",
+                            text = "${bookViewModel.bookMarkedBooks.value.error?.message}",
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
@@ -128,12 +136,12 @@ fun BookMarkedScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.spacedBy(0.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    bookViewModel.bookMarkedBooks.value.data?.count()?.let {
+                    bookMarkedBooks.value.count().let {
                         items(it) { index ->
-                            val book =  bookViewModel.bookMarkedBooks.value.data!![index]
-                            SingleBookMark(book = book){
-                                navController.navigate("${Screens.Details.name}/${book.id}")
-                            }
+                            val book =  bookMarkedBooks.value[index]
+                            SingleBookMark(book = book,callBack = {callFnc(book.id)}){
+                                    navController.navigate("${Screens.Details.name}/${book.id}")
+                                }
                         }
                     }
                 }

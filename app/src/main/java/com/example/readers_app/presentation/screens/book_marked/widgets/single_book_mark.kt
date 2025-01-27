@@ -1,5 +1,7 @@
 package com.example.readers_app.presentation.screens.book_marked.widgets
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -46,7 +48,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 @Composable
-fun SingleBookMark(book: BookMarkedBook, onClick: () -> Unit) {
+fun SingleBookMark(book: BookMarkedBook,callBack: (String) -> Unit, onClick: () -> Unit) {
     val context = LocalContext.current
     val bookMarked = remember { mutableStateOf(false) }
 
@@ -68,17 +70,24 @@ fun SingleBookMark(book: BookMarkedBook, onClick: () -> Unit) {
                 Firebase.firestore.collection("book_marked").document(book.id).set(
                     bookMarkBook.toJson()
                 ).addOnSuccessListener {
-                    Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Firebase.firestore.collection("book_marked").document(book.id).delete()
                     .addOnSuccessListener {
-                        Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        }
                     }
+                callBack(book.id)
             }
 
         } catch (e: Exception) {
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
             Log.d("Error", e.message.toString())
         }
 

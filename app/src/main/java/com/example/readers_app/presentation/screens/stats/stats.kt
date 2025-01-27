@@ -73,7 +73,7 @@ fun StatsScreen(navController: NavController, bookViewModel: BookViewModel = hil
                 error.value = true
             }
 
-            bookViewModel.book.value.data != null -> {
+            bookViewModel.currentlyReadingBooks.value.data != null -> {
                 Log.d("Data", "BOOK IS LOADING...")
                 isLoading.value = false
                 error.value = false
@@ -116,7 +116,7 @@ fun StatsScreen(navController: NavController, bookViewModel: BookViewModel = hil
                            contentDescription = "Connection Error"
                        )
                        Text(
-                           text = "${bookViewModel.books.value.error?.message}",
+                           text = "${bookViewModel.currentlyReadingBooks.value.error?.message}",
                            style = MaterialTheme.typography.titleMedium
                        )
                    }

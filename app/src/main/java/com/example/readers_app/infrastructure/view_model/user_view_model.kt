@@ -1,6 +1,8 @@
 package com.example.readers_app.infrastructure.view_model
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
@@ -20,6 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.compose.runtime.State
 import com.google.firebase.storage.FirebaseStorage
+
 
 @HiltViewModel
 class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firebase: Firebase, private val storage: FirebaseStorage) : ViewModel() {
@@ -52,17 +55,25 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
     fun logout(navController: NavController, context: Context) {
         try {
            firebaseAuth.signOut().run {
-               Toast.makeText(context, "Logout Successful", Toast.LENGTH_SHORT).show()
-                navController.navigate(Screens.Entry.name) {
-                    popUpTo(0)
-                }
+               Handler(Looper.getMainLooper()).post {
+                   Toast.makeText(context, "Logout Successful", Toast.LENGTH_LONG).show()
+                   navController.navigate(Screens.Entry.name) {
+                       popUpTo(0)
+                   }
+               }
             }
+
+
+
+
         } catch (e: Exception) {
-            Toast.makeText(
-                context,
-                "Logout Failed. Please try again.",
-                Toast.LENGTH_SHORT
-            ).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(
+                    context,
+                    "Logout Failed. Please try again.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
@@ -95,8 +106,10 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                                 error.value = ""
                                 loading.value = false
                                 navController.navigate(Screens.BottomNav.name)
-                                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
-                                    .show()
+                                Handler(Looper.getMainLooper()).post {
+                                    Toast.makeText(context, "Login Successful", Toast.LENGTH_LONG)
+                                        .show()
+                                }
                             } else {
                                 loading.value = false
                                 error.value = "Please verify your email"
@@ -148,11 +161,13 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                                     error.value = ""
                                     loading.value = false
                                     navController.navigate(Screens.Login.name)
-                                    Toast.makeText(
-                                        context,
-                                        "Registration Successful. Please verify your email.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    Handler(Looper.getMainLooper()).post {
+                                        Toast.makeText(
+                                            context,
+                                            "Registration Successful. Please verify your email.",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                 } else {
                                     loading.value = false
                                     error.value =
@@ -191,8 +206,10 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                         error.value = ""
                         loading.value = false
                         navController.navigate(Screens.Login.name)
-                        Toast.makeText(context, "Forgot password link sent", Toast.LENGTH_SHORT)
-                            .show()
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Forgot password link sent", Toast.LENGTH_LONG)
+                                .show()
+                        }
                     } else {
                         loading.value = false
                         error.value = task.exception?.localizedMessage.orEmpty()
@@ -201,8 +218,9 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
         } catch (e: Exception) {
             error.value = e.message.toString()
             loading.value = false
-            Toast.makeText(context, "Forgot password failed", Toast.LENGTH_SHORT).show()
-
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, "Forgot password failed", Toast.LENGTH_LONG).show()
+            }
         }
 
     }
@@ -218,18 +236,22 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                                 navController.navigate(Screens.Entry.name) {
                                     popUpTo(0)
                                 }
-                                Toast.makeText(context, "Account Deleted", Toast.LENGTH_SHORT)
-                                    .show()
+                                Handler(Looper.getMainLooper()).post {
+                                    Toast.makeText(context, "Account Deleted", Toast.LENGTH_LONG)
+                                        .show()
+                                }
                             }
                         }
                 }
             }
         } catch (e: Exception) {
-            Toast.makeText(
-                context,
-                "Account Deletion Failed. Please try again.",
-                Toast.LENGTH_SHORT
-            ).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(
+                    context,
+                    "Account Deletion Failed. Please try again.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
 
     }
@@ -255,18 +277,29 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                         error.value = ""
                         loading.value = false
                         navController.popBackStack()
-                        Toast.makeText(context, "Password Updated", Toast.LENGTH_SHORT).show()
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Password Updated", Toast.LENGTH_LONG).show()
+                        }
                     } else {
                         loading.value = false
                         error.value = task.exception?.localizedMessage.orEmpty()
-                        Toast.makeText(context, "Password Update Failed", Toast.LENGTH_SHORT).show()
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Password Update Failed", Toast.LENGTH_LONG)
+                                .show()
+                        }
 
                     }
                 }
             }else{
                 loading.value = false
                 error.value = authenticate.exception?.localizedMessage.orEmpty()
-                Toast.makeText(context, "Password Update Failed, Invalid Old Password", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(
+                        context,
+                        "Password Update Failed, Invalid Old Password",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
@@ -341,12 +374,14 @@ class UserViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                                                             error.value = ""
                                                             loading.value = false
                                                             navController.popBackStack()
-                                                            Toast.makeText(
-                                                                context,
-                                                                "Profile Updated",
-                                                                Toast.LENGTH_SHORT
-                                                            )
-                                                                .show()
+                                                            Handler(Looper.getMainLooper()).post {
+                                                                Toast.makeText(
+                                                                    context,
+                                                                    "Profile Updated",
+                                                                    Toast.LENGTH_LONG
+                                                                )
+                                                                    .show()
+                                                            }
                                                         }else{
                                                             loading.value = false
                                                             error.value = updateTask.exception?.localizedMessage.orEmpty()

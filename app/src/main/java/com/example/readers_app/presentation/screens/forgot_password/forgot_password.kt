@@ -135,7 +135,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 }
-                Spacer(modifier = Modifier.height(220.dp))
+                Spacer(modifier = Modifier.height(350.dp))
                 if (!loading.value)
                     CustomBTN("Forgot Password") {
                         forgotPassword()

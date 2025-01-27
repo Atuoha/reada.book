@@ -1,5 +1,7 @@
 package com.example.readers_app.presentation.screens.update_book
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -108,17 +110,23 @@ fun UpdateBookScreen(
                 Firebase.firestore.collection("book_marked").document(id).set(
                     bookMarkBook.toJson()
                 ).addOnSuccessListener {
-                    Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Firebase.firestore.collection("book_marked").document(id).delete()
                     .addOnSuccessListener {
-                        Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        }
                     }
             }
 
         } catch (e: Exception) {
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
             Log.d("Error", e.message.toString())
         }
 
@@ -130,10 +138,14 @@ fun UpdateBookScreen(
                 "rating", starCount.intValue,
                 "thoughts", review.value
             ).addOnSuccessListener {
-                Toast.makeText(context, "Review Saved", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(context, "Review Saved", Toast.LENGTH_SHORT).show()
+                }
             }
         } catch (e: Exception) {
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
             Log.d("Error", e.message.toString())
         }
 
@@ -145,20 +157,23 @@ fun UpdateBookScreen(
         error.value = false
         bookViewModel.getBookById(id)
 
-        try{
+        try {
             Firebase.firestore.collection("book_marked").document(id).get().addOnSuccessListener {
                 bookMarked.value = it.exists()
                 starCount.intValue = it.get("rating").toString().toDouble().toInt()
                 review.value = it.get("thoughts").toString()
             }
 
-            Firebase.firestore.collection("currently_reading").document(id).get().addOnSuccessListener {
-                if (it.exists()){
-                    isReading.value = it.get("isReading").toString().toBoolean()
+            Firebase.firestore.collection("currently_reading").document(id).get()
+                .addOnSuccessListener {
+                    if (it.exists()) {
+                        isReading.value = it.get("isReading").toString().toBoolean()
+                    }
                 }
+        } catch (e: Exception) {
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
             }
-        }catch (e: Exception){
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
             Log.d("Error", e.message.toString())
         }
 
@@ -189,29 +204,43 @@ fun UpdateBookScreen(
     }
 
     fun startReading() {
-        val currentlyReading = CurrentlyReading(id, book.value?.volumeInfo?.title,book.value?.volumeInfo?.authors?.get(0), book.value?.volumeInfo?.imageLinks?.thumbnail, Date(), null, true)
+        val currentlyReading = CurrentlyReading(
+            id, book.value?.volumeInfo?.title, book.value?.volumeInfo?.authors?.get(0),
+            book.value?.volumeInfo?.imageLinks?.thumbnail, Date(), null, true
+        )
 
-        try{
+        try {
             Firebase.firestore.collection("currently_reading")
                 .document(id).set(currentlyReading.toJson())
                 .addOnSuccessListener {
-                    Toast.makeText(context, "Started Reading", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Started Reading", Toast.LENGTH_SHORT).show()
+                    }
                 }
-        }catch (e: Exception){
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            isReading.value = true
+        } catch (e: Exception) {
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
             Log.d("Error", e.message.toString())
         }
     }
 
 
-    fun finishReading(){
-        try{
-            Firebase.firestore.collection("currently_reading").document(id).update("isReading", false, "end_date", Date())
+    fun finishReading() {
+        try {
+            Firebase.firestore.collection("currently_reading").document(id)
+                .update("isReading", false, "end_date", Date())
                 .addOnSuccessListener {
-                    Toast.makeText(context, "Finished Reading", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Finished Reading", Toast.LENGTH_SHORT).show()
+                    }
                 }
-        }catch (e: Exception){
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            isReading.value = false
+        } catch (e: Exception) {
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
             Log.d("Error", e.message.toString())
         }
     }
@@ -445,8 +474,11 @@ fun UpdateBookScreen(
                         ) {
                             Box(modifier = Modifier.fillMaxWidth(0.40f)) {
 
-                                CustomBTN("Start Reading", containerColor = if(isReading.value) Color.LightGray else primary)  {
-                                    if (!isReading.value){
+                                CustomBTN(
+                                    "Start Reading",
+                                    containerColor = if (isReading.value) Color.LightGray else primary
+                                ) {
+                                    if (!isReading.value) {
                                         startReading()
                                     }
                                 }
@@ -454,7 +486,10 @@ fun UpdateBookScreen(
                             Spacer(modifier = Modifier.width(10.dp))
 
                             Box(modifier = Modifier.fillMaxWidth(0.70f)) {
-                                CustomBTN("Stop Reading", containerColor = if(isReading.value) primary else Color.LightGray) {
+                                CustomBTN(
+                                    "Stop Reading",
+                                    containerColor = if (isReading.value) primary else Color.LightGray
+                                ) {
                                     if (isReading.value) {
                                         finishReading()
                                     }

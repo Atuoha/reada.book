@@ -123,4 +123,6 @@ dependencies {
     // bottom nav
     implementation(libs.androidx.material)
     implementation(libs.androidx.navigation.compose)
+
+
 }

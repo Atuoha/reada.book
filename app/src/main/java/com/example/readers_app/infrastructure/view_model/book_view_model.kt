@@ -44,6 +44,13 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
 
     val currentlyReadingBooks: State<DataOrException<List<CurrentlyReading>, Boolean, Exception>> = _currentlyReadingBooks
 
+    private val _currentlyReadingBook: MutableState<DataOrException<CurrentlyReading, Boolean, Exception>> =
+        mutableStateOf(
+            DataOrException()
+        )
+    val currentlyReadingBook: State<DataOrException<CurrentlyReading, Boolean, Exception>> = _currentlyReadingBook
+
+
     fun getBooks(query: String) {
         viewModelScope.launch {
             _books.value = DataOrException(loading = true)
@@ -96,7 +103,7 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
                     _currentlyReadingBooks.value = DataOrException(data = data.data, loading = false)
                     currentlyReadingBooks.value.data?.forEach {
                         Log.d("BOOK", "Book Title: ${it.title}")
-                        Log.d("BOOK IMAGE", "Book Image: ${it.thumbnail}")
+                        Log.d("Reading", "${it.isReading}")
                     }
                 } else {
                     _currentlyReadingBooks.value =
@@ -106,6 +113,24 @@ class BookViewModel @Inject constructor(private val bookRepository: BookReposito
             } catch (e: Exception) {
                 _currentlyReadingBooks.value = DataOrException(error = e)
                 Log.d("BOOKS ERROR", "currentlyReadingBooks: ${e.message}")
+            }
+        }
+    }
+
+    fun getCurrentlyReadingBook(){
+        viewModelScope.launch {
+            _currentlyReadingBook.value = DataOrException(loading = true)
+
+            try {
+                val data = bookRepository.getCurrentlyReadingBook()
+                if (data.data != null) {
+                    _currentlyReadingBook.value = DataOrException(data = data.data, loading = false)
+                } else {
+                    _currentlyReadingBook.value =
+                        DataOrException(error = Exception("No Currently Reading Book Found"), loading = false)
+                }
+            } catch (e: Exception) {
+                _currentlyReadingBook.value = DataOrException(error = e)
             }
         }
     }

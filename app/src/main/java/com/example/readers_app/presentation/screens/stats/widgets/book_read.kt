@@ -1,5 +1,7 @@
 package com.example.readers_app.presentation.screens.stats.widgets
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -74,37 +76,45 @@ fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
                 )
 
 
-            Firebase.firestore.collection("book_marked").document(book.id).set(
+                Firebase.firestore.collection("book_marked").document(book.id).set(
                     bookMarkBook.toJson()
                 ).addOnSuccessListener {
-                    Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Firebase.firestore.collection("book_marked").document(book.id!!).delete()
                     .addOnSuccessListener {
-                        Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        }
                     }
             }
 
         } catch (e: Exception) {
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
             Log.d("Error", e.message.toString())
         }
 
     }
 
     LaunchedEffect(Unit) {
-        Firebase.firestore.collection("book_marked").document(book.id!!).get().addOnSuccessListener {
-            bookMarked.value = it.exists()
-            starCount.intValue = it.get("rating").toString().toDouble().toInt()?:  0
-        }
+        Firebase.firestore.collection("book_marked").document(book.id!!).get()
+            .addOnSuccessListener {
+                bookMarked.value = it.exists()
+                starCount.intValue = it.get("rating").toString().toDouble().toInt() ?: 0
+            }
     }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp)
-            .background(color = Color.White, shape = RoundedCornerShape(10.dp)).clickable {
+            .height(190.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+            .clickable {
                 onClick()
             }
     ) {
@@ -120,7 +130,8 @@ fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
 
                 Image(
                     painter = rememberImagePainter(
-                        data = book.thumbnail?.toHttps()?.setZoomLevel(10)  ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
+                        data = book.thumbnail?.toHttps()?.setZoomLevel(10)
+                            ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
                         builder = {
                             crossfade(true)
                             error(R.drawable.error_img_big)
@@ -128,7 +139,9 @@ fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
                         }
                     ),
                     contentDescription = "Book Cover",
-                    modifier = Modifier.clip(shape = RoundedCornerShape(5.dp)).width(80.dp),
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(5.dp))
+                        .width(80.dp),
                 )
 
 
@@ -162,7 +175,7 @@ fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = "Star",
-                                tint = if(i <= starCount.intValue) primary else Color.LightGray,
+                                tint = if (i <= starCount.intValue) primary else Color.LightGray,
                                 modifier = Modifier.size(15.dp)
                             )
                             Spacer(modifier = Modifier.width(5.dp))
@@ -186,7 +199,7 @@ fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
                     Icon(
                         imageVector = Icons.Default.Bookmark,
                         contentDescription = "",
-                        tint = if(bookMarked.value) primary else Color.LightGray,
+                        tint = if (bookMarked.value) primary else Color.LightGray,
                         modifier = Modifier.clickable {
                             bookMark()
                         }
@@ -194,14 +207,29 @@ fun BookRead(book: CurrentlyReading, onClick: () -> Unit) {
 
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
-                        if (book.isReading == true)
-                            "Started ${dateFormat.format(book.start_date!!)}"
-                        else
-                            "Finished ${dateFormat.format(book.end_date ?: Date())}",
-                        style = TextStyle(color = Color.LightGray, fontFamily = FontFamily.Serif, fontSize = 13.sp)
+                        "Started ${dateFormat.format(book.start_date)}",
+
+                        style = TextStyle(
+                            color = Color.LightGray,
+                            fontFamily = FontFamily.Serif,
+                            fontSize = 13.sp
+                        )
                     )
-
-
+                    Text(
+                        if (book.isReading)
+                            "Started on ${dateFormat.format(book.start_date)}"
+                        else
+                            "Finished ${
+                                if (book.end_date == null) "Not yet" else "on " + dateFormat.format(
+                                    book.end_date
+                                )
+                            }",
+                        style = TextStyle(
+                            color = Color.LightGray,
+                            fontFamily = FontFamily.Serif,
+                            fontSize = 13.sp
+                        )
+                    )
                 }
             }
 

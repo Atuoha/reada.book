@@ -25,8 +25,10 @@ retrofit = "2.9.0"
 roomRuntime = "2.5.2"
 foundationAndroid = "1.6.7"
 runtimeLivedata = "1.7.6"
+toastifyVersion = "1.0.0"
 
 [libraries]
+akeemrtn-toastify = { module = "com.github.akeemrtn:Toastify", version.ref = "toastifyVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }

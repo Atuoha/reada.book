@@ -1,5 +1,7 @@
 package com.example.readers_app.components
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -69,17 +71,23 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
                 Firebase.firestore.collection("book_marked").document(book.id).set(
                     bookMarkBook.toJson()
                 ).addOnSuccessListener {
-                    Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Bookmarked", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Firebase.firestore.collection("book_marked").document(book.id).delete()
                     .addOnSuccessListener {
-                        Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Bookmark Removed", Toast.LENGTH_SHORT).show()
+                        }
                     }
             }
 
         } catch (e: Exception) {
-            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
             Log.d("Error", e.message.toString())
         }
 
@@ -107,9 +115,9 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
                 .padding(10.dp),
         ) {
 
-            Image(
+           if(book.volumeInfo.imageLinks != null) Image(
                 painter = rememberImagePainter(
-                    data = book.volumeInfo.imageLinks.thumbnail.toHttps().setZoomLevel(10)
+                    data =  book.volumeInfo.imageLinks.thumbnail.toHttps().setZoomLevel(10)
                         ?: AppStrings.BOOK_IMAGE_PLACEHOLDER,
                     builder = {
                         crossfade(true)
@@ -122,10 +130,21 @@ fun SingleBook(book: Item, rating: Int, onClick: () -> Unit) {
                     .clip(shape = RoundedCornerShape(5.dp))
                     .width(80.dp),
             )
-            Log.d(
-                "BOOK IMAGE",
-                book.volumeInfo.imageLinks.smallThumbnail ?: AppStrings.BOOK_IMAGE_PLACEHOLDER
-            )
+            else
+               Image(
+                   painter = rememberImagePainter(
+                       data = AppStrings.BOOK_IMAGE_PLACEHOLDER,
+                       builder = {
+                           crossfade(true)
+                           error(R.drawable.error_img_big)
+                           placeholder(R.drawable.placeholder)
+                       }
+                   ),
+                   contentDescription = "Book Cover",
+                   modifier = Modifier
+                       .clip(shape = RoundedCornerShape(5.dp))
+                       .width(80.dp),
+               )
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
